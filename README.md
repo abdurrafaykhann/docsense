@@ -1,7 +1,7 @@
 # DocSense
 
 AI document intelligence for invoices and receipts (Django · React · LangGraph · YOLO · pgvector).
-See [PLAN.md](PLAN.md) for the full roadmap. Status: **M0 – foundations**.
+See [PLAN.md](PLAN.md) for the full roadmap. Status: **M1 – SaaS core**.
 
 ## Run
 

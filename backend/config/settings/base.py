@@ -23,8 +23,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework_simplejwt",
     "channels",
     "apps.common",
+    "apps.accounts",
+    "apps.workspaces",
     "apps.llm",
 ]
 
@@ -75,7 +78,18 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = Path(env("MEDIA_ROOT", str(BASE_DIR / "media")))
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+AUTH_USER_MODEL = "accounts.User"
+
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "apps.workspaces.auth.ApiKeyAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "apps.common.throttles.UserRateThrottle",
+        "apps.common.throttles.ApiKeyRateThrottle",
+    ],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser",
@@ -106,3 +120,20 @@ LLM_PRIMARY = {"provider": "groq", "model": env("GROQ_MODEL", "llama-3.3-70b-ver
 LLM_FALLBACK = {"provider": "google_genai", "model": env("GEMINI_MODEL", "gemini-2.0-flash")}
 LLM_MAX_RETRIES = int(env("LLM_MAX_RETRIES", "3"))
 LLM_MAX_WAIT_SECONDS = float(env("LLM_MAX_WAIT_SECONDS", "30"))
+
+# --- Auth / rate limiting ---------------------------------------------------
+from datetime import timedelta  # noqa: E402
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+}
+DOCSENSE_THROTTLE_RATES = {"auth": "20/min", "user": "300/min", "apikey": "120/min"}
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+if env("CACHE_REDIS", "0") == "1":
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+        }
+    }

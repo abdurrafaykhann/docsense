@@ -11,3 +11,4 @@ pydantic>=2.8
 langchain>=1.0
 langchain-groq>=1.0
 langchain-google-genai>=3.0
+djangorestframework-simplejwt>=5.3

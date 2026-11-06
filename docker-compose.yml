@@ -4,6 +4,7 @@ x-backend: &backend
   environment:
     DATABASE_URL: postgres://docsense:docsense@db:5432/docsense
     REDIS_URL: redis://redis:6379/0
+    CACHE_REDIS: "1"
   volumes:
     - media:/app/media
   depends_on:
