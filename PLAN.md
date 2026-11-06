@@ -2,7 +2,7 @@
 
 AI document intelligence for invoices and receipts: structured extraction with a self-trained layout model, validation in code, human review with active learning, cited RAG, a spending agent, fraud/anomaly detection, a 3D document universe, and n8n automation. Free-tier only.
 
-Status: **PLAN — awaiting approval. No code written yet.**
+Status: **Built (M0-M14).** See *Status and deviations* at the end for what changed from this plan and why.
 
 ---
 
@@ -363,3 +363,24 @@ Rough effort (solo, part-time): M0–M3 ≈ 2 weeks, M4–M8 ≈ 3–4 weeks, M9
 ## 15. What happens next
 
 On your OK (and answers to D3–D8 at minimum, rest can default to my recommendations), I start **M0**, finish it with CI green and tests passing, show you the result, make a commit, and wait for your go-ahead before M1 — or continue straight on if you prefer.
+
+
+---
+
+## 16. Status and deviations (written after the build)
+
+All fifteen milestones were built and committed one at a time with their tests. What differs from the plan above:
+
+| Plan | What happened | Why |
+|---|---|---|
+| pgvector for all dense search | **Both.** Embeddings are stored as float32 blobs and searched with NumPy cosine (SQLite dev/tests); on PostgreSQL they are mirrored into a `vector(384)` table with an HNSW index (`apps/rag/pgvector.py`) and used for the dense half of hybrid search | Unit tests and local dev run without Postgres. The Postgres path has tests that only run against Postgres (CI service container); **they have not been run locally** (no Docker engine available) |
+| LLM extraction numbers in the README | **Not produced** (no Groq/Gemini key was configured). The harness, arms and caches exist (`make eval-cord-llm`); a regex+docTR baseline is reported instead | Honest gap, not an estimate |
+| RAG answer judge numbers | **Not produced** for the same reason; retrieval metrics (no LLM) are real. `manage.py eval_rag --answer-provider groq --judge-provider gemini` enforces different providers, paces calls and caches verdicts | Free-tier keys |
+| SROIE + CORD | **CORD only** (CC BY 4.0, test split). SROIE has no clear open licence | Licence |
+| Real layout test set hand-labeled by me | **CORD's own word-level annotations** give genuine table/totals boxes (65 held-out receipts); vendor/meta/other have no real ground truth. `ml/tools/labeler.html` + `import_labels.py` let you label them | Nothing to label from; no real Pakistani invoices were supplied |
+| W&B or MLflow | MLflow (local, sqlite) | D2 |
+| Playwright + Chromium | Playwright driving the system Edge | No browser download |
+| Layout experiments a-d | a-d plus **e/f (scene augmentation)** added after the real-data failure analysis | The measured synthetic-to-real gap pointed at scale/background, so I tested that hypothesis |
+| `process_document` text-layer shortcut for digital PDFs | Not implemented; every PDF goes through OCR | Time; noted under "what I'd improve" |
+| Docker verified end to end | **Not verified in this environment** (Docker daemon unavailable); compose file validates and the app was run natively against SQLite | Environment |
+| n8n workflow import tested | Structurally validated by tests; **not imported into a live n8n** (the n8n MCP connection failed) | Environment |

@@ -1,0 +1,28 @@
+{
+ "kind": "layout",
+ "dataset": "cord-real-test",
+ "arm": "exp-e: full augmentation + scene placement (page small on a table/hand)",
+ "n": 65,
+ "git_sha": "e4e3d13",
+ "created_at": "2026-11-06T20:11:46.990283+00:00",
+ "metrics": {
+  "map50": 0.2268,
+  "map50_95": 0.082,
+  "per_class_ap50": {
+   "vendor": null,
+   "meta": null,
+   "table": 0.2659,
+   "totals": 0.1877,
+   "other": null
+  }
+ },
+ "config": {
+  "exp": "e",
+  "aug": "scene",
+  "epochs": 8,
+  "imgsz": 416,
+  "batch": 16,
+  "base": "yolo11n.pt",
+  "real_mix": false
+ }
+}

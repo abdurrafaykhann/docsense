@@ -59,7 +59,7 @@ function Points({ points, colorBy, onOpen, onHover }: Omit<Props, 'clusters' | '
           if (e.instanceId !== undefined) onOpen(points[e.instanceId].id)
         }}
       >
-        <sphereGeometry args={[0.05, 10, 10]} />
+        <sphereGeometry args={[0.09, 12, 12]} />
         <meshStandardMaterial roughness={0.45} />
       </instancedMesh>
       {hovered && (
@@ -90,7 +90,8 @@ function FpsWatch({ onSlow }: { onSlow: () => void }) {
     if (frames.current.length > 240) frames.current.shift()
     if (!fired.current && shouldFallback(frames.current)) {
       fired.current = true
-      onSlow()
+      // never unmount the canvas from inside its own render loop (React/DOM error): defer
+      setTimeout(onSlow, 0)
     }
   })
   return null
@@ -106,7 +107,7 @@ export default function UniverseScene3D({
 }: Props) {
   return (
     <Canvas
-      camera={{ position: [0, 0, 8], fov: 50 }}
+      camera={{ position: [0, 0, 6], fov: 50 }}
       dpr={[1, 2]}
       gl={{ antialias: points.length < 3000, powerPreference: 'high-performance' }}
       aria-label="3D document universe"

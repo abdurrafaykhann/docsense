@@ -12,7 +12,7 @@ from apps.documents.models import Document
 from apps.llm import context as llm_context
 from apps.validation.grounding import Word
 
-from . import chunking
+from . import chunking, pgvector
 from .embedding import Embedder, HashEmbedder, SentenceTransformerEmbedder, to_blob
 from .models import Chunk
 from .rerank import CrossEncoderReranker, OverlapReranker, Reranker
@@ -71,7 +71,7 @@ def index_document(doc: Document, embedder: Embedder | None = None) -> int:
     if not pieces:
         return 0
     vectors = embedder.embed([p.text for p in pieces])
-    Chunk.objects.bulk_create(
+    created = Chunk.objects.bulk_create(
         Chunk(
             document=doc,
             workspace=doc.workspace,
@@ -85,6 +85,7 @@ def index_document(doc: Document, embedder: Embedder | None = None) -> int:
         )
         for i, p in enumerate(pieces)
     )
+    pgvector.mirror(created, vectors)  # no-op unless PostgreSQL + 384-d embeddings
     return len(pieces)
 
 
@@ -114,12 +115,15 @@ def retrieve(
     rows = list(qs.select_related("document").order_by("id"))
     if not rows:
         return []
+    qvec = embedder.embed([question])[0]
+    ann = pgvector.dense_candidates(workspace_id, embedder.name, qvec, 20, document_ids)
     cands = hybrid_search(
         question,
-        embedder.embed([question])[0],
+        qvec,
         [r.id for r in rows],
         [r.text for r in rows],
         [r.embedding for r in rows],
+        dense_override=ann or None,  # ANN from pgvector when available, else NumPy cosine
     )
     by_id = {r.id: r for r in rows}
     scores = reranker.score(question, [by_id[c.chunk_id].text for c in cands])

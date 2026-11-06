@@ -64,12 +64,21 @@ def hybrid_search(
     texts: list[str],
     blobs: list[bytes],
     top_k: int = 20,
+    dense_override: dict[int, float] | None = None,
 ) -> list[Candidate]:
+    """`dense_override` ({chunk_id: cosine}) replaces the NumPy scan when pgvector did the ANN."""
     if not chunk_ids:
         return []
-    dense = dense_scores(query_vec, blobs)
+    if dense_override is not None:
+        dense = np.array([dense_override.get(cid, 0.0) for cid in chunk_ids], dtype=np.float32)
+    else:
+        dense = dense_scores(query_vec, blobs)
     kw = bm25_scores(query, texts)
-    dense_rank = [chunk_ids[i] for i in np.argsort(-dense)[:top_k]]
+    dense_rank = [
+        chunk_ids[i]
+        for i in np.argsort(-dense)[:top_k]
+        if dense_override is None or dense[i] != 0.0 or chunk_ids[i] in dense_override
+    ]
     # keyword ranking only includes chunks that matched at least one query term
     kw_rank = [chunk_ids[i] for i in np.argsort(-kw)[:top_k] if kw[i] > 0]
     fused = rrf([dense_rank, kw_rank])

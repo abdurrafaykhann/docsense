@@ -1,0 +1,329 @@
+{
+ "kind": "rag",
+ "dataset": "demo-workspace (48 questions)",
+ "arm": "retrieval | all-MiniLM-L6-v2 + ms-marco-MiniLM-L-6-v2",
+ "n": 48,
+ "git_sha": "e4e3d13",
+ "created_at": "2026-11-06T19:55:15.831039+00:00",
+ "metrics": {
+  "n_questions": 48,
+  "n_answerable": 42,
+  "hit_at_5": 1.0,
+  "mrr": 0.85,
+  "hit_at_5_by_category": {
+   "lookup_total": 1.0,
+   "lookup_date": 1.0,
+   "line_item": 1.0,
+   "registration": 1.0
+  },
+  "unanswerable_rejected_by_gate": 0.8333,
+  "n_unanswerable": 6
+ },
+ "docs": [],
+ "per_question": {
+  "retrieval": {
+   "n_questions": 48,
+   "n_answerable": 42,
+   "hit_at_5": 1.0,
+   "mrr": 0.85,
+   "hit_at_5_by_category": {
+    "lookup_total": 1.0,
+    "lookup_date": 1.0,
+    "line_item": 1.0,
+    "registration": 1.0
+   },
+   "unanswerable_rejected_by_gate": 0.8333,
+   "n_unanswerable": 6,
+   "per_question": [
+    {
+     "id": "q001",
+     "category": "lookup_total",
+     "rank": 1,
+     "top_score": 0.999
+    },
+    {
+     "id": "q002",
+     "category": "lookup_date",
+     "rank": 2,
+     "top_score": 0.9993
+    },
+    {
+     "id": "q003",
+     "category": "lookup_total",
+     "rank": 1,
+     "top_score": 0.999
+    },
+    {
+     "id": "q004",
+     "category": "lookup_date",
+     "rank": 1,
+     "top_score": 0.9994
+    },
+    {
+     "id": "q005",
+     "category": "line_item",
+     "rank": 1,
+     "top_score": 0.9995
+    },
+    {
+     "id": "q006",
+     "category": "registration",
+     "rank": 1,
+     "top_score": 0.9824
+    },
+    {
+     "id": "q007",
+     "category": "lookup_total",
+     "rank": 3,
+     "top_score": 0.9995
+    },
+    {
+     "id": "q008",
+     "category": "lookup_date",
+     "rank": 1,
+     "top_score": 0.9996
+    },
+    {
+     "id": "q009",
+     "category": "lookup_total",
+     "rank": 1,
+     "top_score": 0.9996
+    },
+    {
+     "id": "q010",
+     "category": "lookup_date",
+     "rank": 1,
+     "top_score": 0.9996
+    },
+    {
+     "id": "q011",
+     "category": "line_item",
+     "rank": 5,
+     "top_score": 0.9994
+    },
+    {
+     "id": "q012",
+     "category": "registration",
+     "rank": 1,
+     "top_score": 0.9979
+    },
+    {
+     "id": "q013",
+     "category": "lookup_total",
+     "rank": 1,
+     "top_score": 0.9993
+    },
+    {
+     "id": "q014",
+     "category": "lookup_date",
+     "rank": 1,
+     "top_score": 0.9996
+    },
+    {
+     "id": "q015",
+     "category": "lookup_total",
+     "rank": 1,
+     "top_score": 0.9994
+    },
+    {
+     "id": "q016",
+     "category": "lookup_date",
+     "rank": 1,
+     "top_score": 0.9996
+    },
+    {
+     "id": "q017",
+     "category": "line_item",
+     "rank": 1,
+     "top_score": 0.9997
+    },
+    {
+     "id": "q018",
+     "category": "registration",
+     "rank": 1,
+     "top_score": 0.9971
+    },
+    {
+     "id": "q019",
+     "category": "lookup_total",
+     "rank": 1,
+     "top_score": 0.9994
+    },
+    {
+     "id": "q020",
+     "category": "lookup_date",
+     "rank": 1,
+     "top_score": 0.9997
+    },
+    {
+     "id": "q021",
+     "category": "lookup_total",
+     "rank": 1,
+     "top_score": 0.9995
+    },
+    {
+     "id": "q022",
+     "category": "lookup_date",
+     "rank": 1,
+     "top_score": 0.9997
+    },
+    {
+     "id": "q023",
+     "category": "line_item",
+     "rank": 2,
+     "top_score": 0.9997
+    },
+    {
+     "id": "q024",
+     "category": "registration",
+     "rank": 1,
+     "top_score": 0.9987
+    },
+    {
+     "id": "q025",
+     "category": "lookup_total",
+     "rank": 3,
+     "top_score": 0.9996
+    },
+    {
+     "id": "q026",
+     "category": "lookup_date",
+     "rank": 1,
+     "top_score": 0.9998
+    },
+    {
+     "id": "q027",
+     "category": "lookup_total",
+     "rank": 1,
+     "top_score": 0.9996
+    },
+    {
+     "id": "q028",
+     "category": "lookup_date",
+     "rank": 1,
+     "top_score": 0.9998
+    },
+    {
+     "id": "q029",
+     "category": "line_item",
+     "rank": 2,
+     "top_score": 0.9996
+    },
+    {
+     "id": "q030",
+     "category": "registration",
+     "rank": 1,
+     "top_score": 0.999
+    },
+    {
+     "id": "q031",
+     "category": "lookup_total",
+     "rank": 1,
+     "top_score": 0.9994
+    },
+    {
+     "id": "q032",
+     "category": "lookup_date",
+     "rank": 2,
+     "top_score": 0.9997
+    },
+    {
+     "id": "q033",
+     "category": "lookup_total",
+     "rank": 1,
+     "top_score": 0.9993
+    },
+    {
+     "id": "q034",
+     "category": "lookup_date",
+     "rank": 1,
+     "top_score": 0.9996
+    },
+    {
+     "id": "q035",
+     "category": "line_item",
+     "rank": 1,
+     "top_score": 0.9998
+    },
+    {
+     "id": "q036",
+     "category": "registration",
+     "rank": 1,
+     "top_score": 0.9976
+    },
+    {
+     "id": "q037",
+     "category": "lookup_total",
+     "rank": 2,
+     "top_score": 0.9996
+    },
+    {
+     "id": "q038",
+     "category": "lookup_date",
+     "rank": 2,
+     "top_score": 0.9997
+    },
+    {
+     "id": "q039",
+     "category": "lookup_total",
+     "rank": 1,
+     "top_score": 0.9996
+    },
+    {
+     "id": "q040",
+     "category": "lookup_date",
+     "rank": 2,
+     "top_score": 0.9997
+    },
+    {
+     "id": "q041",
+     "category": "line_item",
+     "rank": 3,
+     "top_score": 0.9997
+    },
+    {
+     "id": "q042",
+     "category": "registration",
+     "rank": 1,
+     "top_score": 0.9973
+    },
+    {
+     "id": "q043",
+     "category": "unanswerable",
+     "gated": true,
+     "top_score": 0.0007
+    },
+    {
+     "id": "q044",
+     "category": "unanswerable",
+     "gated": true,
+     "top_score": 0.0
+    },
+    {
+     "id": "q045",
+     "category": "unanswerable",
+     "gated": true,
+     "top_score": 0.0006
+    },
+    {
+     "id": "q046",
+     "category": "unanswerable",
+     "gated": false,
+     "top_score": 0.2644
+    },
+    {
+     "id": "q047",
+     "category": "unanswerable",
+     "gated": true,
+     "top_score": 0.0001
+    },
+    {
+     "id": "q048",
+     "category": "unanswerable",
+     "gated": true,
+     "top_score": 0.002
+    }
+   ]
+  }
+ }
+}

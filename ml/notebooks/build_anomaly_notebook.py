@@ -98,7 +98,12 @@ nb.cells = [
         "fix scale but are themselves distorted by the outliers they are trying to find (the spike inflates "
         "the standard deviation: *masking*). Median/MAD does not have that problem. IsolationForest "
         "catches what totals alone cannot (zero tax on a normal total, 35 line items) and works for "
-        "vendors with little history; the union gives the best recall at acceptable precision."
+        "vendors with little history; the union gives the best recall at acceptable precision.\n\n"
+        "**Caveats.** The injected anomalies are large (x4 to x12), so this is an easy benchmark and the "
+        "perfect union score should not be read as real-world accuracy. Production also applies a "
+        "*materiality guard* (an amount outlier must differ from the vendor median by at least 1.8x): it was added "
+        "after seeding the demo workspace, where short vendor series with natural quantity variation produced "
+        "statistically significant but business-irrelevant flags. Smaller deviations are deliberately not flagged."
     ),
     code(
         "by_kind = {k: [] for k in ('spike','tiny','tax')}\n"

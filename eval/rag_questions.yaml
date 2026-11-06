@@ -412,7 +412,7 @@ questions:
   answerable: false
 - id: q048
   category: unanswerable
-  question: What is the bank account number used to pay Al-Mart?
+  question: What early-payment discount did Al-Mart offer?
   gold_docs: []
   gold_contains: []
   answerable: false

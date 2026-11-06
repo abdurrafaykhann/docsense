@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { api } from '../api/client'
 import UniverseScatter2D from '../components/UniverseScatter2D'
+import { parseHashQuery } from '../hooks/useHashRoute'
 import { webgl2Supported } from '../lib/universe'
 import type { ColorBy, UCluster, UPoint } from '../lib/universe'
 
@@ -17,6 +18,8 @@ export default function UniversePage({ workspaceId }: { workspaceId: number }) {
     webgl2Supported() ? null : 'WebGL2 is not available on this device: showing the 2D map.',
   )
   const [busy, setBusy] = useState(false)
+  // #/universe?force3d=1 keeps the 3D view even on a slow machine (debugging / demos)
+  const force3d = parseHashQuery(location.hash).get('force3d') === '1'
 
   const load = useCallback(async () => {
     const d = await api<{ points: UPoint[]; clusters: UCluster[] }>(
@@ -102,6 +105,7 @@ export default function UniversePage({ workspaceId }: { workspaceId: number }) {
                 onOpen={open}
                 onHover={setHover}
                 onSlow={() => {
+                  if (force3d) return
                   setMode('2d')
                   setNotice('Frame rate was low, so we switched to the lighter 2D map.')
                 }}

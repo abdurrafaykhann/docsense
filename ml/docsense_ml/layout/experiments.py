@@ -80,7 +80,7 @@ def build_mixed_dataset(
         f"path: {out.resolve().as_posix()}\n"
         f"train:\n  - {(synth_full / 'images' / 'train').resolve().as_posix()}\n"
         f"  - {(mix / 'images' / 'train').resolve().as_posix()}\n"
-        f"val: {(synth_full / 'images' / 'val').resolve().as_posix()}\n"
+        f"val: {(val_dir or synth_full / 'images' / 'val').resolve().as_posix()}\n"
         "names:\n" + "".join(f"  {i}: {c}\n" for i, c in enumerate(CLASSES)),
         encoding="utf-8",
     )

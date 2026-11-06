@@ -33,7 +33,7 @@ POLICY = [
 FUEL = ["Petrol pump receipt", "Fuel purchase 40 litres of petrol", "Total fuel cost 12000"]
 
 
-def make_doc(ws, name, lines, pages=1):
+def make_doc(ws, name, lines, pages=1, embedder=None):
     d = Document(workspace=ws, original_name=name, content_type="image/png", size=1, sha256=name)
     d.file.save(name, ContentFile(b"x"), save=True)
     for n in range(1, pages + 1):
@@ -44,7 +44,7 @@ def make_doc(ws, name, lines, pages=1):
             height=200,
             words=[w.as_dict() for w in words_from_lines(lines, page=n)],
         )
-    service.index_document(d, EMB)
+    service.index_document(d, embedder or EMB)
     return d
 
 

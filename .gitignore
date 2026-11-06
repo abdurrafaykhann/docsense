@@ -19,6 +19,9 @@ ml/runs/
 ml/data/
 ml/runs/
 ml/runs_train.log
-ml/models/
 mlflow.db
 mlruns/
+backend/demo.sqlite3
+backend/demo_media/
+ml/models/*
+!ml/models/layout-current.pt

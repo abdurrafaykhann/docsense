@@ -32,7 +32,7 @@ UNANSWERABLE = [
     "What was the weather in Karachi on the day of the first invoice?",
     "What is the refund policy for returned goods?",
     "Which employee approved the largest invoice?",
-    "What is the bank account number used to pay Al-Mart?",
+    "What early-payment discount did Al-Mart offer?",
 ]
 
 
