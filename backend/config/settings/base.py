@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "apps.rag",
     "apps.analytics",
     "apps.agent",
+    "apps.universe",
 ]
 
 MIDDLEWARE = [

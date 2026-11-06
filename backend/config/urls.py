@@ -12,4 +12,5 @@ urlpatterns = [
     path("api/v1/", include("apps.rag.urls")),
     path("api/v1/", include("apps.analytics.urls")),
     path("api/v1/", include("apps.agent.urls")),
+    path("api/v1/", include("apps.universe.urls")),
 ]

@@ -7,6 +7,7 @@ import AdminPage from './pages/AdminPage'
 import DocumentPage from './pages/DocumentPage'
 import DocumentsPage from './pages/DocumentsPage'
 import EvaluationPage from './pages/EvaluationPage'
+import UniversePage from './pages/UniversePage'
 import LoginPage from './pages/LoginPage'
 import SettingsPage from './pages/SettingsPage'
 
@@ -41,6 +42,7 @@ export default function App() {
         {link('#/documents', 'Documents', !section || section === 'documents')}
         {link('#/analytics', 'Analytics', section === 'analytics')}
         {link('#/spending', 'Spending AI', section === 'spending')}
+        {link('#/universe', 'Universe', section === 'universe')}
         {link('#/ask', 'Ask', section === 'ask')}
         {link('#/evaluation', 'Evaluation', section === 'evaluation')}
         {me.user.is_staff && link('#/admin', 'Admin', section === 'admin')}
@@ -52,6 +54,8 @@ export default function App() {
         <AdminPage />
       ) : section === 'evaluation' ? (
         <EvaluationPage />
+      ) : section === 'universe' ? (
+        <UniversePage workspaceId={workspaceId} />
       ) : section === 'spending' ? (
         <AgentPage workspaceId={workspaceId} />
       ) : section === 'analytics' ? (
