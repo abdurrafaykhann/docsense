@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "apps.analytics",
     "apps.agent",
     "apps.universe",
+    "apps.integrations",
 ]
 
 MIDDLEWARE = [
@@ -163,3 +164,7 @@ LAYOUT_MODEL_PATH = env(
 # --- RAG ----------------------------------------------------------------------
 EMBEDDER = env("EMBEDDER", "st")  # st = local sentence-transformers | hash = offline test embedder
 RERANKER = env("RERANKER", "ce")  # ce = local cross-encoder | overlap = offline test reranker
+
+# --- Integrations ----------------------------------------------------------------
+WEBHOOKS_ALLOW_PRIVATE = env("WEBHOOKS_ALLOW_PRIVATE", "0") == "1"  # dev: allow localhost n8n
+PUBLIC_APP_URL = env("PUBLIC_APP_URL", "http://localhost:5173")

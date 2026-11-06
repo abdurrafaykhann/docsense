@@ -1,0 +1,377 @@
+{
+  "name": "DocSense invoice intake",
+  "nodes": [
+    {
+      "id": "a1",
+      "name": "New Email (IMAP)",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mailbox": "INBOX",
+        "postProcessAction": "read",
+        "format": "resolved",
+        "downloadAttachments": true,
+        "options": {}
+      },
+      "credentials": {
+        "imap": {
+          "id": "REPLACE_ME",
+          "name": "Invoices mailbox (IMAP)"
+        }
+      }
+    },
+    {
+      "id": "a2",
+      "name": "Split Attachments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// One output item per supported attachment, with the file under binary.data\nconst ok = /\\.(pdf|png|jpe?g|webp)$/i;\nconst out = [];\nfor (const item of $input.all()) {\n  for (const [key, bin] of Object.entries(item.binary || {})) {\n    if (!ok.test(bin.fileName || '')) continue;\n    out.push({\n      json: { subject: item.json.subject || '', from: item.json.from?.text || '' },\n      binary: { data: bin },\n    });\n  }\n}\nreturn out;\n"
+      }
+    },
+    {
+      "id": "a3",
+      "name": "Send to DocSense",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DOCSENSE_URL }}/api/v1/integrations/inbound/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "files",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "source",
+              "value": "n8n-email"
+            },
+            {
+              "name": "sender",
+              "value": "={{ $json.from }}"
+            },
+            {
+              "name": "subject",
+              "value": "={{ $json.subject }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "DocSense API key (X-API-Key)"
+        }
+      }
+    },
+    {
+      "id": "b1",
+      "name": "DocSense Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        360
+      ],
+      "webhookId": "docsense-events",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "docsense",
+        "responseMode": "onReceived",
+        "options": {
+          "rawBody": true
+        }
+      }
+    },
+    {
+      "id": "b2",
+      "name": "Verify Signature",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        360
+      ],
+      "parameters": {
+        "jsCode": "// Verify X-DocSense-Signature = HMAC-SHA256(secret, `${timestamp}.${rawBody}`) and reject replays.\n// Needs: Webhook node option \"Raw Body\" = on, env DOCSENSE_WEBHOOK_SECRET,\n//        NODE_FUNCTION_ALLOW_BUILTIN=crypto\nconst crypto = require('crypto');\nconst item = $input.first();\nconst headers = item.json.headers || {};\nconst secret = $env.DOCSENSE_WEBHOOK_SECRET;\nif (!secret) throw new Error('DOCSENSE_WEBHOOK_SECRET is not set');\nconst ts = headers['x-docsense-timestamp'];\nconst sig = headers['x-docsense-signature'] || '';\nconst raw = Buffer.from(item.binary.data.data, 'base64');\nconst expected = 'sha256=' + crypto.createHmac('sha256', secret).update(ts + '.').update(raw).digest('hex');\nconst a = Buffer.from(sig), b = Buffer.from(expected);\nif (a.length !== b.length || !crypto.timingSafeEqual(a, b)) throw new Error('Bad DocSense signature');\nif (Math.abs(Date.now() / 1000 - Number(ts)) > 300) throw new Error('Stale DocSense webhook (replay?)');\nreturn [{ json: JSON.parse(raw.toString('utf8')) }];\n"
+      }
+    },
+    {
+      "id": "b3",
+      "name": "Is Processed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-b3",
+              "leftValue": "={{ $json.event }}",
+              "rightValue": "document.processed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b4",
+      "name": "Append to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        220
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REPLACE_WITH_SPREADSHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Invoices"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Added": "={{ $json.created_at }}",
+            "Document": "={{ $json.document.name }}",
+            "Vendor": "={{ $json.extraction.vendor_name }}",
+            "NTN": "={{ $json.extraction.ntn }}",
+            "STRN": "={{ $json.extraction.strn }}",
+            "Invoice No": "={{ $json.extraction.invoice_number }}",
+            "Invoice Date": "={{ $json.extraction.invoice_date }}",
+            "Subtotal": "={{ $json.extraction.subtotal }}",
+            "Sales Tax": "={{ $json.extraction.sales_tax }}",
+            "Total": "={{ $json.extraction.total }}",
+            "Needs Review": "={{ $json.document.needs_review }}",
+            "Confidence": "={{ $json.document.overall_confidence }}",
+            "Issues": "={{ $json.issues.join(', ') }}",
+            "Link": "={{ $json.document.url }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_ME",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "id": "b5",
+      "name": "Is Flagged?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        480,
+        460
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-b5",
+              "leftValue": "={{ $json.event }}",
+              "rightValue": "document.flagged",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b6",
+      "name": "Alert on Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        400
+      ],
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "#finance-alerts"
+        },
+        "text": "=:warning: *DocSense flagged an invoice*\n{{ $json.document.name }} ({{ $json.extraction.vendor_name }}, total {{ $json.extraction.total }})\n{{ $json.flags.map(f => f.kind + ' (' + f.severity + ')').join(', ') }}\n{{ $json.document.url }}",
+        "otherOptions": {}
+      },
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "REPLACE_ME",
+          "name": "Slack"
+        }
+      }
+    },
+    {
+      "id": "b7",
+      "name": "Alert by Email (alternative)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        560
+      ],
+      "disabled": true,
+      "parameters": {
+        "fromEmail": "docsense@example.com",
+        "toEmail": "finance@example.com",
+        "subject": "=DocSense flagged {{ $json.document.name }}",
+        "emailFormat": "text",
+        "text": "={{ $json.document.name }} from {{ $json.extraction.vendor_name }} was flagged: {{ $json.flags.map(f => f.kind).join(', ') }}\n{{ $json.document.url }}",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "REPLACE_ME",
+          "name": "SMTP"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "New Email (IMAP)": {
+      "main": [
+        [
+          {
+            "node": "Split Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Attachments": {
+      "main": [
+        [
+          {
+            "node": "Send to DocSense",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DocSense Webhook": {
+      "main": [
+        [
+          {
+            "node": "Verify Signature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Signature": {
+      "main": [
+        [
+          {
+            "node": "Is Processed?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Is Flagged?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Processed?": {
+      "main": [
+        [
+          {
+            "node": "Append to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Is Flagged?": {
+      "main": [
+        [
+          {
+            "node": "Alert on Slack",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Alert by Email (alternative)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

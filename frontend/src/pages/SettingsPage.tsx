@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { api } from '../api/client'
 import type { ApiKeyRow, Member, Usage } from '../api/types'
 import { useAuth } from '../auth/AuthContext'
+import WebhooksSection from '../components/WebhooksSection'
 
 const card = 'rounded-xl border border-slate-800 bg-slate-900 p-4'
 
@@ -134,6 +135,7 @@ export default function SettingsPage() {
           </div>
         </section>
       )}
+      {isOwner && wsId != null && <WebhooksSection workspaceId={wsId} />}
     </main>
   )
 }

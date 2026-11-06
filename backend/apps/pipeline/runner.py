@@ -70,6 +70,11 @@ def run_pipeline(document_id: int, *, ocr=None, llm=None, layout=_UNSET) -> Docu
             from apps.rag.service import index_quietly
 
             index_quietly(doc)
+            from apps.integrations.payloads import processed_payload
+            from apps.integrations.webhooks import emit_quietly
+
+            doc.refresh_from_db()
+            emit_quietly(doc.workspace_id, "document.processed", processed_payload(doc))
     except Exception as exc:  # noqa: BLE001
         log.exception("pipeline failed for document %s at %s", document_id, step)
         doc.status = Document.Status.FAILED

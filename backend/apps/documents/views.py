@@ -1,7 +1,3 @@
-import hashlib
-
-from django.conf import settings
-from django.db import transaction
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -11,12 +7,12 @@ from rest_framework.response import Response
 
 from apps.pipeline.progress import initial_progress
 from apps.pipeline.tasks import process_document
-from apps.workspaces import usage
 from apps.workspaces.models import Role
 from apps.workspaces.views import WorkspaceScoped
 
 from . import review
 from .models import Document, Extraction
+from .uploads import create_documents
 
 
 def doc_summary(d: Document) -> dict:
@@ -75,37 +71,10 @@ class DocumentList(WorkspaceScoped):
         files = request.FILES.getlist("files") or request.FILES.getlist("file")
         if not files:
             raise ValidationError({"files": "Upload at least one file."})
-        ws = self.workspace()
-        created = []
-        errors = []
-        for f in files:
-            ctype = f.content_type
-            if ctype not in settings.ALLOWED_UPLOAD_TYPES:
-                errors.append({"name": f.name, "error": f"Unsupported type {ctype}"})
-                continue
-            try:
-                with transaction.atomic():
-                    usage.reserve_upload(ws, f.size)
-                    data = f.read()
-                    f.seek(0)
-                    doc = Document.objects.create(
-                        workspace=ws,
-                        uploader=None if request.auth else request.user,
-                        file=f,
-                        original_name=f.name[:255],
-                        content_type=ctype,
-                        size=f.size,
-                        sha256=hashlib.sha256(data).hexdigest(),
-                        progress=initial_progress(),
-                    )
-            except (usage.UploadLimitExceeded, usage.FileTooLarge) as exc:
-                errors.append({"name": f.name, "error": str(exc.detail)})
-                continue
-            created.append(doc)
-            process_document.delay(doc.id)
+        created, errors = create_documents(
+            self.workspace(), files, uploader=None if request.auth else request.user
+        )
         code = status.HTTP_201_CREATED if created else status.HTTP_400_BAD_REQUEST
-        for d in created:
-            d.refresh_from_db()
         return Response(
             {"documents": [doc_summary(d) for d in created], "errors": errors}, status=code
         )
