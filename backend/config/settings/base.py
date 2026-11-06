@@ -125,8 +125,8 @@ else:
 
 # --- LLM (free tier) ------------------------------------------------------
 LLM_PROVIDER = env("LLM_PROVIDER", "groq")  # groq | gemini | fake
-LLM_PRIMARY = {"provider": "groq", "model": env("GROQ_MODEL", "llama-3.3-70b-versatile")}
-LLM_FALLBACK = {"provider": "google_genai", "model": env("GEMINI_MODEL", "gemini-2.0-flash")}
+LLM_PRIMARY = {"provider": "groq", "model": env("GROQ_MODEL", "openai/gpt-oss-120b")}
+LLM_FALLBACK = {"provider": "google_genai", "model": env("GEMINI_MODEL", "gemini-3.1-flash-lite")}
 LLM_MAX_RETRIES = int(env("LLM_MAX_RETRIES", "3"))
 LLM_MAX_WAIT_SECONDS = float(env("LLM_MAX_WAIT_SECONDS", "30"))
 

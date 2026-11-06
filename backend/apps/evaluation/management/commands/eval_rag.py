@@ -24,8 +24,8 @@ from apps.llm.client import LLMClient, Provider
 from apps.llm.pacing import Paced
 from apps.workspaces.models import Workspace
 
-KEYS = {"groq": ("groq", "GROQ_MODEL", "llama-3.3-70b-versatile", "GROQ_API_KEY"),
-        "gemini": ("google_genai", "GEMINI_MODEL", "gemini-2.0-flash", "GOOGLE_API_KEY")}  # fmt: skip
+KEYS = {"groq": ("groq", "GROQ_MODEL", "openai/gpt-oss-120b", "GROQ_API_KEY"),
+        "gemini": ("google_genai", "GEMINI_MODEL", "gemini-3.1-flash-lite", "GOOGLE_API_KEY")}  # fmt: skip
 
 
 def make_client(name: str, min_interval: float) -> LLMClient:

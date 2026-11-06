@@ -10,10 +10,10 @@ from apps.llm.client import LLMClient, Provider
 from .caches import FileCache, Paced
 
 DEFAULTS = {
-    "groq": ("groq", os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile"), "GROQ_API_KEY"),
+    "groq": ("groq", os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b"), "GROQ_API_KEY"),
     "gemini": (
         "google_genai",
-        os.environ.get("GEMINI_MODEL", "gemini-2.0-flash"),
+        os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite"),
         "GOOGLE_API_KEY",
     ),
 }

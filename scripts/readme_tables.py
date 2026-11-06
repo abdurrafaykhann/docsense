@@ -111,6 +111,8 @@ def rag_table(runs: list[dict]) -> str:
     rows = [r for r in runs if r.get("kind") == "rag"]
     if not rows:
         return "_No RAG runs yet._"
+    if any((r["metrics"].get("answers") for r in rows)):
+        rows = [r for r in rows if r["metrics"].get("answers")]  # retrieval-only runs are subsumed
     out = [
         "| Setup | Questions | Hit@5 | MRR | Unanswerable rejected by retrieval gate | Judge (1-5) | "
         "Citation accuracy | Abstention accuracy |",

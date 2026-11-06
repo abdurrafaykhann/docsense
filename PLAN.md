@@ -374,8 +374,8 @@ All fifteen milestones were built and committed one at a time with their tests. 
 | Plan | What happened | Why |
 |---|---|---|
 | pgvector for all dense search | **Both.** Embeddings are stored as float32 blobs and searched with NumPy cosine (SQLite dev/tests); on PostgreSQL they are mirrored into a `vector(384)` table with an HNSW index (`apps/rag/pgvector.py`) and used for the dense half of hybrid search | Unit tests and local dev run without Postgres. The Postgres path has tests that only run against Postgres (CI service container); **they have not been run locally** (no Docker engine available) |
-| LLM extraction numbers in the README | **Not produced** (no Groq/Gemini key was configured). The harness, arms and caches exist (`make eval-cord-llm`); a regex+docTR baseline is reported instead | Honest gap, not an estimate |
-| RAG answer judge numbers | **Not produced** for the same reason; retrieval metrics (no LLM) are real. `manage.py eval_rag --answer-provider groq --judge-provider gemini` enforces different providers, paces calls and caches verdicts | Free-tier keys |
+| LLM extraction numbers in the README | Produced later, once keys were available: Groq `gpt-oss-120b` on the 65 held-out CORD receipts (whole page and with my layout model) | Keys were not available during the build |
+| RAG answer judge numbers | Produced: Groq `gpt-oss-20b` answers, Gemini `gemini-3.1-flash-lite` judges (different provider), 48 questions. `gpt-oss-120b`'s free daily token quota ran out mid-run | Free-tier limits |
 | SROIE + CORD | **CORD only** (CC BY 4.0, test split). SROIE has no clear open licence | Licence |
 | Real layout test set hand-labeled by me | **CORD's own word-level annotations** give genuine table/totals boxes (65 held-out receipts); vendor/meta/other have no real ground truth. `ml/tools/labeler.html` + `import_labels.py` let you label them | Nothing to label from; no real Pakistani invoices were supplied |
 | W&B or MLflow | MLflow (local, sqlite) | D2 |
