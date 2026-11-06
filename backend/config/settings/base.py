@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "apps.evaluation",
     "apps.learning",
     "apps.rag",
+    "apps.analytics",
 ]
 
 MIDDLEWARE = [

@@ -7,6 +7,7 @@ from decimal import Decimal, InvalidOperation
 from django.db import transaction
 from django.utils import timezone
 
+from apps.analytics.categorize import categorize
 from apps.validation import rules
 from apps.validation.schema import SCALAR_FIELDS, InvoiceExtraction, LineItem, to_number
 
@@ -115,6 +116,7 @@ def approve(ext: Extraction, user) -> Invoice:
             "tax_rate": _dec(inv.tax_rate),
             "sales_tax": _dec(inv.sales_tax),
             "total": _dec(inv.total),
+            "category": categorize([li.description or "" for li in inv.line_items]),
         },
     )
     invoice.items.all().delete()
@@ -148,6 +150,9 @@ def approve(ext: Extraction, user) -> Invoice:
     from apps.rag.service import index_quietly
 
     index_quietly(doc)  # refresh the summary chunk with the human-corrected values
+    from apps.analytics.service import run_quietly
+
+    run_quietly(doc.workspace_id)  # duplicates / outliers / price creep
     return invoice
 
 

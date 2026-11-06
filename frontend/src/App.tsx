@@ -1,5 +1,6 @@
 import { useAuth } from './auth/AuthContext'
 import { useHashLocation } from './hooks/useHashRoute'
+import AnalyticsPage from './pages/AnalyticsPage'
 import AskPage from './pages/AskPage'
 import AdminPage from './pages/AdminPage'
 import DocumentPage from './pages/DocumentPage'
@@ -37,6 +38,7 @@ export default function App() {
       <nav className="flex items-center gap-5 border-b border-slate-800 pb-3 text-sm">
         <strong className="text-lg">DocSense</strong>
         {link('#/documents', 'Documents', !section || section === 'documents')}
+        {link('#/analytics', 'Analytics', section === 'analytics')}
         {link('#/ask', 'Ask', section === 'ask')}
         {link('#/evaluation', 'Evaluation', section === 'evaluation')}
         {me.user.is_staff && link('#/admin', 'Admin', section === 'admin')}
@@ -48,6 +50,8 @@ export default function App() {
         <AdminPage />
       ) : section === 'evaluation' ? (
         <EvaluationPage />
+      ) : section === 'analytics' ? (
+        <AnalyticsPage workspaceId={workspaceId} />
       ) : section === 'ask' ? (
         <AskPage workspaceId={workspaceId} />
       ) : section === 'documents' && arg ? (

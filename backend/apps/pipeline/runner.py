@@ -121,6 +121,12 @@ def _persist(doc, res, provider):
         )
         for s in scores
     )
+    if cleaned:
+        import imagehash
+        from PIL import Image
+
+        doc.phash = str(imagehash.phash(Image.fromarray(cleaned[0])))
+        doc.save(update_fields=["phash"])
     doc.page_count = len(cleaned)
     doc.status = Document.Status.NEEDS_REVIEW if review else Document.Status.DONE
     doc.save(update_fields=["page_count", "status", "updated_at"])

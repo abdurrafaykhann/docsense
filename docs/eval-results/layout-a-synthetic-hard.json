@@ -1,0 +1,28 @@
+{
+ "kind": "layout",
+ "dataset": "synthetic-hard",
+ "arm": "exp-a: synthetic, no augmentation",
+ "n": 60,
+ "git_sha": "2b39626",
+ "created_at": "2026-11-06T18:41:34.559541+00:00",
+ "metrics": {
+  "map50": 0.4931,
+  "map50_95": 0.1792,
+  "per_class_ap50": {
+   "vendor": 0.7339,
+   "meta": 0.3167,
+   "table": 0.7245,
+   "totals": 0.3181,
+   "other": 0.3725
+  }
+ },
+ "config": {
+  "exp": "a",
+  "aug": "none",
+  "epochs": 8,
+  "imgsz": 416,
+  "batch": 16,
+  "base": "yolo11n.pt",
+  "real_mix": false
+ }
+}

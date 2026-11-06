@@ -19,6 +19,7 @@ class Document(models.Model):
     content_type = models.CharField(max_length=100, blank=True)
     size = models.PositiveBigIntegerField(default=0)
     sha256 = models.CharField(max_length=64, db_index=True)
+    phash = models.CharField(max_length=16, blank=True)  # perceptual hash of page 1
     doc_type = models.CharField(max_length=30, default="invoice")
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.QUEUED)
     error = models.TextField(blank=True)
