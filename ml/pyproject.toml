@@ -12,6 +12,7 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+extend-exclude = ["notebooks"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
@@ -19,3 +20,6 @@ select = ["E", "F", "I", "B", "UP"]
 [tool.ruff.lint.per-file-ignores]
 "docsense_ml/synth/render.py" = ["E501"]
 "docsense_ml/synth/providers.py" = ["E501"]
+"docsense_ml/rag_questions.py" = ["E501"]
+"docsense_ml/layout/gallery.py" = ["E501", "E741"]
+"docsense_ml/synth/scene.py" = ["E501"]

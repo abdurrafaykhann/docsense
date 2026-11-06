@@ -26,6 +26,8 @@ EXPERIMENTS = {
     "b": ("basic", "synthetic, basic augmentation"),
     "c": ("full", "synthetic, full augmentation"),
     "d": ("full", "full augmentation + 30 real receipts (few-shot mix)"),
+    "e": ("scene", "full augmentation + scene placement (page small on a table/hand)"),
+    "f": ("scene", "scene augmentation + 30 real receipts (few-shot mix)"),
 }
 MIX_COPIES = 3  # oversample the few real images so they matter next to hundreds of synthetic ones
 PSEUDO_CONF = 0.5
@@ -65,7 +67,9 @@ def pseudo_label_mix(weights: Path, real: Path, out: Path, imgsz: int) -> int:
     return n
 
 
-def build_mixed_dataset(synth_full: Path, real: Path, weights: Path, out: Path, imgsz: int) -> Path:
+def build_mixed_dataset(
+    synth_full: Path, real: Path, weights: Path, out: Path, imgsz: int, val_dir: Path | None = None
+) -> Path:
     mix = out / "real_mix"
     if mix.exists():
         shutil.rmtree(mix)
@@ -157,11 +161,19 @@ def main() -> None:
     for exp in a.exps.split(","):
         level, desc = EXPERIMENTS[exp]
         data = synth / level / "data.yaml"
-        if exp == "d":
-            base_w = trained.get("c") or runs / "yolo" / "exp-c" / "weights" / "best.pt"
-            data = build_mixed_dataset(synth / "full", real, base_w, runs / "mixed", a.imgsz)
+        if exp in ("d", "f"):
+            donor = "c" if exp == "d" else "e"  # pseudo-labels come from the matching no-real model
+            base_w = trained.get(donor) or runs / "yolo" / f"exp-{donor}" / "weights" / "best.pt"
+            data = build_mixed_dataset(
+                synth / level,
+                real,
+                base_w,
+                runs / f"mixed-{exp}",
+                a.imgsz,
+                val_dir=synth / "valfull" / "images" / "val",
+            )
         params = {"exp": exp, "aug": level, "epochs": a.epochs, "imgsz": a.imgsz, "batch": a.batch,
-                  "base": a.base, "real_mix": exp == "d"}  # fmt: skip
+                  "base": a.base, "real_mix": exp in ("d", "f")}  # fmt: skip
         print(f"=== experiment {exp}: {desc}")
         existing = runs / "yolo" / f"exp-{exp}" / "weights" / "best.pt"
         rows = runs / "yolo" / f"exp-{exp}" / "results.csv"

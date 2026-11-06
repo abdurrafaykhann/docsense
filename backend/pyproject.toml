@@ -9,3 +9,5 @@ select = ["E", "F", "I", "B", "UP"]
 
 [tool.ruff.lint.per-file-ignores]
 "apps/agent/graph.py" = ["E501"]
+"apps/evaluation/rag_eval.py" = ["E501"]
+"apps/evaluation/management/commands/eval_rag.py" = ["E501"]

@@ -1,6 +1,6 @@
 """Builds and executes ml/notebooks/02_anomaly_methods.ipynb (outputs embedded).
 
-    python ml/notebooks/build_anomaly_notebook.py
+python ml/notebooks/build_anomaly_notebook.py
 """
 
 from pathlib import Path
@@ -162,7 +162,9 @@ nb.cells = [
 ]
 
 nb.metadata["kernelspec"] = {"name": "docsense", "display_name": "docsense", "language": "python"}
-client = NotebookClient(nb, timeout=600, kernel_name="docsense", resources={"metadata": {"path": str(HERE)}})
+client = NotebookClient(
+    nb, timeout=600, kernel_name="docsense", resources={"metadata": {"path": str(HERE)}}
+)
 client.execute()
 out = HERE / "02_anomaly_methods.ipynb"
 nbf.write(nb, out)

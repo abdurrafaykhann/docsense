@@ -48,7 +48,7 @@ def test_image_duplicate_uses_perceptual_hash_distance_and_weakest_precedence():
     a, b = "ffff0000ffff0000", "ffff0000ffff0007"  # 3 bits apart
     assert hamming(a, b) == 3
     flags = find_duplicates(
-        [row(1, vendor=1, phash=a, total=10), row(2, vendor=2, phash=b, total=99)]
+        [row(1, vendor=1, phash=a, total=10), row(2, vendor=2, phash=b, total=10)]
     )
     assert flags[0].kind == "image_dup"
     far = "0000ffff0000ffff"
@@ -80,7 +80,7 @@ def test_robust_outlier_flags_a_spike_but_not_normal_variation_or_thin_history()
     assert [f.document_id for f in flags] == [999]
     assert flags[0].evidence["direction"] == "high" and flags[0].severity == "high"
     assert robust_outliers(vendor_series()) == []
-    assert robust_outliers([*vendor_series(3), row(999, total=99999.0)]) == []  # < 5 invoices
+    assert robust_outliers([*vendor_series(3), row(999, total=10999.0)]) == []  # < 5 invoices
     low = robust_outliers([*vendor_series(), row(998, total=40.0)])
     assert low and low[0].evidence["direction"] == "low"
 
@@ -131,3 +131,31 @@ def test_price_creep_ignores_stable_prices_thin_history_and_other_vendors():
     mixed = items([520, 525], vendor=1) + items([900], vendor=2)
     assert price_creep(mixed) == []
     assert item_key("Cooking Oil, 1L!") == item_key("cooking  oil 1l")
+
+
+# ---------------------------------------------------------------- regressions from the demo data
+def test_same_template_invoices_from_one_vendor_are_not_image_duplicates():
+    """Regression: pHash of two invoices with the same layout is nearly identical, so image
+    similarity must be ignored when invoice numbers / totals differ."""
+    same_layout = "ffff0000ffff0000"
+    rows = [
+        row(1, number="INV-001", total=1000, phash=same_layout),
+        row(2, number="INV-002", total=1200, phash=same_layout, d=D0 + timedelta(days=30)),
+    ]
+    assert find_duplicates(rows) == []
+    # same picture + same total + a missing/misread number: still flagged
+    rows = [
+        row(1, number="", total=1000, phash=same_layout),
+        row(2, number="", total=1000, phash=same_layout, d=D0 + timedelta(days=60)),
+    ]
+    assert [f.kind for f in find_duplicates(rows)] == ["image_dup"]
+
+
+def test_robust_outlier_needs_material_difference_not_just_statistical_distance():
+    # a very tight vendor: +30% is many MADs away but not a business-relevant jump
+    tight = [row(100 + i, total=1000.0 + i, number=f"N{i}") for i in range(8)]
+    assert robust_outliers([*tight, row(999, total=1300.0, number="X")]) == []
+    big = robust_outliers([*tight, row(999, total=2500.0, number="Y")])
+    assert [f.document_id for f in big] == [999] and big[0].evidence["ratio"] > 2
+    small = robust_outliers([*tight, row(998, total=300.0, number="Z")])
+    assert small and small[0].evidence["direction"] == "low"

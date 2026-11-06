@@ -139,6 +139,7 @@ test('admin page shows the old-vs-new comparison and activates a model', async (
   vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
     const url = String(input)
     calls.push(`${init?.method ?? 'GET'} ${url}`)
+    if (url.includes('/llm-usage/')) return json({}, 403)
     return json(url.includes('/activate/') ? { ...MODELS.models[0], is_active: true } : MODELS)
   })
   render(<AdminPage />)

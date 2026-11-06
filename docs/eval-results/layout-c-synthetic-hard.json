@@ -1,0 +1,28 @@
+{
+ "kind": "layout",
+ "dataset": "synthetic-hard",
+ "arm": "exp-c: synthetic, full augmentation",
+ "n": 60,
+ "git_sha": "39e08bf",
+ "created_at": "2026-11-06T19:15:08.615515+00:00",
+ "metrics": {
+  "map50": 0.9849,
+  "map50_95": 0.7039,
+  "per_class_ap50": {
+   "vendor": 0.9921,
+   "meta": 0.9948,
+   "table": 0.9947,
+   "totals": 0.9854,
+   "other": 0.9575
+  }
+ },
+ "config": {
+  "exp": "c",
+  "aug": "full",
+  "epochs": 8,
+  "imgsz": 416,
+  "batch": 16,
+  "base": "yolo11n.pt",
+  "real_mix": false
+ }
+}

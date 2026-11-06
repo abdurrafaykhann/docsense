@@ -21,3 +21,4 @@ scikit-learn>=1.4
 imagehash>=4.3
 langgraph>=1.0
 umap-learn>=0.5
+pyyaml>=6

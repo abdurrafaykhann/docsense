@@ -76,3 +76,30 @@ test('layout runs show per-class AP50 with dashes where a class has no ground tr
   expect(table).toHaveTextContent('72.0%')
   expect(table.querySelectorAll('tbody td')[4]).toHaveTextContent('—')
 })
+
+test('rag runs show retrieval metrics and dashes until an answer run exists', async () => {
+  vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+    new Response(
+      JSON.stringify([
+        {
+          id: 7,
+          kind: 'rag',
+          dataset: 'demo-workspace (48 questions)',
+          arm: 'retrieval | MiniLM + cross-encoder',
+          n: 48,
+          git_sha: 'abc',
+          created_at: '',
+          config: {},
+          metrics: { hit_at_5: 0.95, mrr: 0.88, unanswerable_rejected_by_gate: 0.83 },
+        },
+      ]),
+      { headers: { 'Content-Type': 'application/json' } },
+    ),
+  )
+  render(<EvaluationPage />)
+  const table = await screen.findByRole('table', { name: 'RAG runs' })
+  expect(table).toHaveTextContent('95.0%')
+  expect(table).toHaveTextContent('0.88')
+  expect(table).toHaveTextContent('83.0%')
+  expect(table.querySelectorAll('tbody td')[5]).toHaveTextContent('—')
+})

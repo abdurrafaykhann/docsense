@@ -92,7 +92,7 @@ def _dec(v) -> Decimal | None:
 
 
 @transaction.atomic
-def approve(ext: Extraction, user) -> Invoice:
+def approve(ext: Extraction, user, *, side_effects: bool = True) -> Invoice:
     """Mark reviewed and upsert the denormalised Invoice / LineItems / Vendor."""
     doc = ext.document
     inv = effective_invoice(ext)
@@ -139,6 +139,8 @@ def approve(ext: Extraction, user) -> Invoice:
         action__in=["field_edited", "box_edited", "regions_edited"]
     ).exists()
     audit(doc, user, "approved", unresolved=[i["code"] for i in ext.issues])
+    if not side_effects:  # bulk seeding does indexing / detection once, at the end
+        return invoice
     from apps.learning.services import capture_sample  # lazy: avoids an import cycle
 
     capture_sample(

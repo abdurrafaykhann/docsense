@@ -52,6 +52,18 @@ def hamming(a: str, b: str) -> int:
     return bin(int(a, 16) ^ int(b, 16)).count("1")
 
 
+def _may_be_same_document(a: InvoiceRow, b: InvoiceRow) -> bool:
+    """Same-template invoices look alike to a perceptual hash, so image similarity alone proves
+    nothing: two invoices from one vendor have near-identical pHashes. A visual match only counts
+    when structured data does not contradict it (different invoice numbers, or different totals)."""
+    na, nb = _norm_number(a.number), _norm_number(b.number)
+    if na and nb and na != nb:
+        return False
+    if a.total is not None and b.total is not None and abs(a.total - b.total) >= 0.01:
+        return False
+    return True
+
+
 def find_duplicates(
     rows: list[InvoiceRow], near_days: int = 3, phash_distance: int = 6
 ) -> list[FlagSpec]:
@@ -95,7 +107,12 @@ def find_duplicates(
                 and abs((a.date - b.date).days) <= near_days
             ):
                 add(b, a, "near_dup", "medium", reason="same vendor, amount and close dates")
-            elif a.phash and b.phash and hamming(a.phash, b.phash) <= phash_distance:
+            elif (
+                a.phash
+                and b.phash
+                and hamming(a.phash, b.phash) <= phash_distance
+                and _may_be_same_document(a, b)
+            ):
                 add(b, a, "image_dup", "low", reason="visually near-identical image",
                     distance=hamming(a.phash, b.phash))  # fmt: skip
     return list(flags.values())
@@ -113,9 +130,15 @@ def modified_z_scores(values: np.ndarray) -> np.ndarray:
 
 
 def robust_outliers(
-    rows: list[InvoiceRow], z_threshold: float = 3.5, min_per_vendor: int = 5
+    rows: list[InvoiceRow],
+    z_threshold: float = 3.5,
+    min_per_vendor: int = 5,
+    min_ratio: float = 1.8,
 ) -> list[FlagSpec]:
-    """Per-vendor robust z-score on totals (log scale so multiplicative jumps stand out)."""
+    """Per-vendor robust z-score on totals (log scale so multiplicative jumps stand out).
+
+    Statistical significance alone over-flags short, naturally varying series, so an invoice must
+    also differ from the vendor median by at least `min_ratio` (default 1.8x up or down)."""
     by_vendor: dict[int, list[InvoiceRow]] = defaultdict(list)
     for r in rows:
         if r.vendor_id is not None and r.total and r.total > 0:
@@ -128,7 +151,9 @@ def robust_outliers(
         z = modified_z_scores(np.log(totals))
         med = float(np.median(totals))
         for r, zi in zip(vendor_rows, z, strict=True):
-            if abs(zi) >= z_threshold:
+            ratio = r.total / med
+            material = ratio >= min_ratio or ratio <= 1 / min_ratio
+            if abs(zi) >= z_threshold and material:
                 out.append(
                     FlagSpec(
                         r.document_id,
@@ -138,6 +163,7 @@ def robust_outliers(
                             "method": "robust_z",
                             "z": round(float(zi), 2),
                             "vendor_median": round(med, 2),
+                            "ratio": round(ratio, 2),
                             "total": r.total,
                             "direction": "high" if zi > 0 else "low",
                         },

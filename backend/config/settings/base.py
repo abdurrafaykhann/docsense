@@ -168,3 +168,8 @@ RERANKER = env("RERANKER", "ce")  # ce = local cross-encoder | overlap = offline
 # --- Integrations ----------------------------------------------------------------
 WEBHOOKS_ALLOW_PRIVATE = env("WEBHOOKS_ALLOW_PRIVATE", "0") == "1"  # dev: allow localhost n8n
 PUBLIC_APP_URL = env("PUBLIC_APP_URL", "http://localhost:5173")
+
+# --- Demo workspace ---------------------------------------------------------------
+SEED_DIR = Path(env("SEED_DIR", str(BASE_DIR.parent / "seed" / "demo_workspace")))
+DEMO_EMAIL = env("DEMO_EMAIL", "demo@docsense.dev")
+DEMO_PASSWORD = env("DEMO_PASSWORD", "docsense-demo-2025")  # public demo account, sample data only

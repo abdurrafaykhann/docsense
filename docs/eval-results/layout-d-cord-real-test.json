@@ -1,0 +1,28 @@
+{
+ "kind": "layout",
+ "dataset": "cord-real-test",
+ "arm": "exp-d: full augmentation + 30 real receipts (few-shot mix)",
+ "n": 65,
+ "git_sha": "39e08bf",
+ "created_at": "2026-11-06T19:33:27.907650+00:00",
+ "metrics": {
+  "map50": 0.5882,
+  "map50_95": 0.3009,
+  "per_class_ap50": {
+   "vendor": null,
+   "meta": null,
+   "table": 0.5432,
+   "totals": 0.6333,
+   "other": null
+  }
+ },
+ "config": {
+  "exp": "d",
+  "aug": "full",
+  "epochs": 8,
+  "imgsz": 416,
+  "batch": 16,
+  "base": "yolo11n.pt",
+  "real_mix": true
+ }
+}

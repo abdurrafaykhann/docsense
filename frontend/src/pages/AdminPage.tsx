@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { activateModel, getModels, rollbackModel, startRetrain } from '../api/admin'
 import type { AdminModels, ModelRow } from '../api/admin'
+import LlmUsage from '../components/LlmUsage'
 
 const pct = (v: number) => `${(v * 100).toFixed(1)}%`
 const card = 'rounded-xl border border-slate-800 bg-slate-900 p-4'
@@ -152,6 +153,7 @@ export default function AdminPage() {
           ))}
         </tbody>
       </table>
+      <LlmUsage />
     </section>
   )
 }

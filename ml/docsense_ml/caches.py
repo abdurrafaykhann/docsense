@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import hashlib
 import json
-import time
 from pathlib import Path
 
 import numpy as np
+from apps.llm.pacing import Paced
 from apps.validation.grounding import Word
+
+__all__ = ["CachedOCR", "FileCache", "Paced"]
 
 
 class CachedOCR:
@@ -48,28 +50,3 @@ class FileCache:
 
     def set(self, key: str, value: dict) -> None:
         (self.dir / f"{key}.json").write_text(json.dumps(value), encoding="utf-8")
-
-
-class Paced:
-    """Proxy for a chat model that enforces a minimum interval between requests (free tier)."""
-
-    def __init__(self, model, min_interval: float, sleep=time.sleep, clock=time.monotonic):
-        self.model, self.min_interval = model, min_interval
-        self._last: float | None = None
-        self._sleep, self._clock = sleep, clock
-
-    def with_structured_output(self, schema):
-        runnable = self.model.with_structured_output(schema)
-        outer = self
-
-        class _R:
-            def invoke(self, messages):
-                wait = outer.min_interval - (outer._clock() - (outer._last or 0.0))
-                if outer._last is not None and wait > 0:
-                    outer._sleep(wait)
-                try:
-                    return runnable.invoke(messages)
-                finally:
-                    outer._last = outer._clock()
-
-        return _R()

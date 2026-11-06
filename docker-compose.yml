@@ -1,12 +1,19 @@
 x-backend: &backend
-  build: ./backend
+  build:
+    context: ./backend
+    args:
+      INSTALL_ML: ${INSTALL_ML:-1}
   env_file: .env
   environment:
     DATABASE_URL: postgres://docsense:docsense@db:5432/docsense
     REDIS_URL: redis://redis:6379/0
     CACHE_REDIS: "1"
+    SEED_DIR: /app/seed/demo_workspace
+    LAYOUT_MODEL_PATH: /app/ml/models/layout-current.pt
   volumes:
     - media:/app/media
+    - ./seed:/app/seed:ro
+    - ./ml/models:/app/ml/models:ro
   depends_on:
     db: { condition: service_healthy }
     redis: { condition: service_started }
@@ -24,10 +31,27 @@ services:
     image: redis:7-alpine
   api:
     <<: *backend
+    environment:
+      DATABASE_URL: postgres://docsense:docsense@db:5432/docsense
+      REDIS_URL: redis://redis:6379/0
+      CACHE_REDIS: "1"
+      SEED_DIR: /app/seed/demo_workspace
+      LAYOUT_MODEL_PATH: /app/ml/models/layout-current.pt
+      SEED_DEMO: "1"       # one command setup: migrate + seed the demo workspace on first start
+      RUN_MIGRATIONS: "1"
     ports: ["8000:8000"]
   worker:
     <<: *backend
+    environment:
+      DATABASE_URL: postgres://docsense:docsense@db:5432/docsense
+      REDIS_URL: redis://redis:6379/0
+      CACHE_REDIS: "1"
+      SEED_DIR: /app/seed/demo_workspace
+      LAYOUT_MODEL_PATH: /app/ml/models/layout-current.pt
+      RUN_MIGRATIONS: "0"
     command: celery -A config worker -l info
+    depends_on:
+      api: { condition: service_started }
   mlflow:
     image: ghcr.io/mlflow/mlflow:latest
     command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:///mlflow/mlflow.db --default-artifact-root /mlflow/artifacts

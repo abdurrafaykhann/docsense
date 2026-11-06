@@ -23,6 +23,16 @@ interface Metrics {
   map50?: number
   map50_95?: number
   per_class_ap50?: Record<string, number | null>
+  hit_at_5?: number | null
+  mrr?: number | null
+  unanswerable_rejected_by_gate?: number | null
+  hit_at_5_by_category?: Record<string, number>
+  answers?: {
+    judge_score_mean_1_5: number | null
+    exact_fact_rate: number | null
+    citation_accuracy: number | null
+    abstention_accuracy: number | null
+  }
 }
 
 interface Run {
@@ -52,6 +62,7 @@ export default function EvaluationPage() {
   if (!runs) return <p className="text-slate-400">Loading…</p>
   const extraction = runs.filter((r) => r.kind === 'extraction')
   const layout = runs.filter((r) => r.kind === 'layout')
+  const rag = runs.filter((r) => r.kind === 'rag')
   const selected = extraction.find((r) => r.id === open)
   const th = 'px-2 py-1 text-left font-medium text-slate-400'
 
@@ -140,6 +151,49 @@ export default function EvaluationPage() {
           </table>
           <p className="mt-1 text-xs text-slate-500">
             “—” = no ground truth for that class in the set (CORD annotates only table and totals).
+          </p>
+        </div>
+      )}
+      {rag.length > 0 && (
+        <div className="overflow-x-auto">
+          <h2 className="mb-2 font-semibold">Ask your documents (RAG)</h2>
+          <table className="w-full min-w-[720px] text-sm" aria-label="RAG runs">
+            <thead>
+              <tr>
+                {[
+                  'Setup',
+                  'Questions',
+                  'Hit@5',
+                  'MRR',
+                  'Unanswerable rejected',
+                  'Judge (1-5)',
+                  'Citation acc.',
+                  'Abstention acc.',
+                ].map((h) => (
+                  <th key={h} className={th}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rag.map((r) => (
+                <tr key={r.id} className="border-t border-slate-800">
+                  <td className="px-2 py-1.5">{r.arm}</td>
+                  <td className="px-2 py-1.5">{r.n}</td>
+                  <td className="px-2 py-1.5">{pct(r.metrics.hit_at_5)}</td>
+                  <td className="px-2 py-1.5">{r.metrics.mrr ?? '—'}</td>
+                  <td className="px-2 py-1.5">{pct(r.metrics.unanswerable_rejected_by_gate)}</td>
+                  <td className="px-2 py-1.5">{r.metrics.answers?.judge_score_mean_1_5 ?? '—'}</td>
+                  <td className="px-2 py-1.5">{pct(r.metrics.answers?.citation_accuracy)}</td>
+                  <td className="px-2 py-1.5">{pct(r.metrics.answers?.abstention_accuracy)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="mt-1 text-xs text-slate-500">
+            Retrieval metrics need no LLM. Answer metrics (judge, citation, abstention) appear after
+            running <code>manage.py eval_rag --answer-provider … --judge-provider …</code>.
           </p>
         </div>
       )}
