@@ -1,0 +1,41 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:#fff;width:800px;font:{{ s.size }}px '{{ s.font }}',sans-serif;color:#1f2937}
+.wrap{padding:28px 34px}
+.band{background:{{ s.accent }};color:#fff;padding:10px 16px;font-size:{{ s.size + 6 }}px;font-weight:bold;letter-spacing:1px}
+.grid{display:flex;gap:24px;margin:16px 0}.grid>div{flex:1}
+table.items{width:100%;border-collapse:collapse;margin-top:6px}
+table.items th{background:#e5e7eb;border:1px solid #9ca3af;padding:6px;text-align:left}
+table.items td{border:1px solid #d1d5db;padding:6px}
+.r{text-align:right}.tot{width:300px;margin-left:auto;border-collapse:collapse}.tot td{padding:5px 8px;border-bottom:1px solid #e5e7eb}
+.lbl{color:#6b7280}
+</style></head><body><div class="wrap">
+<div class="band">SALES TAX INVOICE</div>
+<div class="grid">
+  <div data-region="vendor">
+    <div style="font-size:{{ s.size + 5 }}px;font-weight:bold" data-field="vendor_name">{{ d.vendor_name }}</div>
+    <div>{{ d.address }}</div><div>Phone: {{ d.phone }}</div>
+    <div><span class="lbl">NTN:</span> <span data-field="ntn">{{ d.ntn }}</span></div>
+    <div><span class="lbl">Sales Tax Reg. No (STRN):</span> <span data-field="strn">{{ d.strn }}</span></div>
+  </div>
+  <div data-region="meta">
+    <div><span class="lbl">Invoice No:</span> <b data-field="invoice_number">{{ d.invoice_number }}</b></div>
+    <div><span class="lbl">Invoice Date:</span> <span data-field="invoice_date">{{ d.invoice_date|fmtdate(s.date_fmt) }}</span></div>
+    <div><span class="lbl">Buyer:</span> {{ d.customer }}</div>
+    <div><span class="lbl">Buyer NTN:</span> {{ d.customer_ntn }}</div>
+    <div><span class="lbl">Payment:</span> {{ d.payment }}</div>
+  </div>
+</div>
+<div data-region="table"><table class="items">
+<tr><th>#</th><th>Description</th><th>Qty</th><th class="r">Rate</th><th class="r">Value excl. tax</th></tr>
+{% for li in d.line_items %}<tr><td>{{ loop.index }}</td><td>{{ li.description }}</td><td>{{ li.quantity|qty }} {{ li.unit }}</td><td class="r">{{ li.unit_price|money('plain') }}</td><td class="r">{{ li.amount|money('plain') }}</td></tr>{% endfor %}
+</table></div>
+<div data-region="totals" style="margin-top:14px"><table class="tot">
+<tr><td>Total excl. tax</td><td class="r" data-field="subtotal">{{ d.subtotal|money(s.money) }}</td></tr>
+<tr><td>Sales Tax @ <span data-field="tax_rate">{{ d.tax_rate|qty }}%</span></td><td class="r" data-field="sales_tax">{{ d.sales_tax|money(s.money) }}</td></tr>
+<tr style="font-weight:bold;font-size:{{ s.size + 3 }}px"><td>Total incl. tax</td><td class="r" data-field="total">{{ d.total|money(s.money) }}</td></tr>
+</table></div>
+<div data-region="other" style="margin-top:26px;display:flex;justify-content:space-between;color:#6b7280;font-size:{{ s.size - 2 }}px">
+  <div>This is a computer generated invoice.<br>E&amp;OE. Payment due within 15 days.</div>
+  <div style="border:2px solid #9ca3af;width:70px;height:70px;text-align:center;line-height:70px">QR</div>
+</div>
+</div></body></html>

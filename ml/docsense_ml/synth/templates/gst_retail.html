@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:#fff;width:560px;font:{{ s.size }}px '{{ s.font }}',sans-serif;color:#111}
+.wrap{padding:20px 22px}
+.head{text-align:center}
+.logo{display:inline-block;width:46px;height:46px;border-radius:50%;background:{{ s.accent }};color:#fff;line-height:46px;font-weight:bold;font-size:20px}
+table{width:100%;border-collapse:collapse}
+.items th{border-bottom:2px solid {{ s.accent }};text-align:left;padding:4px}
+.items td{padding:4px}.items tr:nth-child(even) td{background:#f3f4f6}
+.r{text-align:right}
+</style></head><body><div class="wrap">
+<div class="head" data-region="vendor">
+  <div class="logo">{{ d.vendor_name[0] }}</div>
+  <div style="font-size:{{ s.size + 6 }}px;font-weight:bold;color:{{ s.accent }}" data-field="vendor_name">{{ d.vendor_name }}</div>
+  <div>{{ d.address }} &middot; {{ d.phone }}</div>
+  <div>NTN <span data-field="ntn">{{ d.ntn }}</span> | GST No. <span data-field="strn">{{ d.strn }}</span></div>
+</div>
+<div style="text-align:center;font-weight:bold;margin:8px 0;letter-spacing:2px">GST INVOICE</div>
+<div data-region="meta" style="display:flex;justify-content:space-between;margin-bottom:8px">
+  <div>Bill No: <span data-field="invoice_number">{{ d.invoice_number }}</span><br>Customer: {{ d.customer }}</div>
+  <div class="r">Date: <span data-field="invoice_date">{{ d.invoice_date|fmtdate(s.date_fmt) }}</span><br>Mode: {{ d.payment }}</div>
+</div>
+<div data-region="table"><table class="items">
+<tr><th>Description</th><th>Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr>
+{% for li in d.line_items %}<tr><td>{{ li.description }}</td><td>{{ li.quantity|qty }}</td><td class="r">{{ li.unit_price|money('plain') }}</td><td class="r">{{ li.amount|money('plain') }}</td></tr>{% endfor %}
+</table></div>
+<div data-region="totals" style="margin-top:10px"><table style="width:260px;margin-left:auto">
+<tr><td>Sub Total</td><td class="r" data-field="subtotal">{{ d.subtotal|money(s.money) }}</td></tr>
+<tr><td>GST <span data-field="tax_rate">{{ d.tax_rate|qty }}%</span></td><td class="r" data-field="sales_tax">{{ d.sales_tax|money(s.money) }}</td></tr>
+<tr style="font-weight:bold;border-top:2px solid {{ s.accent }}"><td>Net Total</td><td class="r" data-field="total">{{ d.total|money(s.money) }}</td></tr>
+</table></div>
+<div data-region="other" style="text-align:center;margin-top:16px;font-size:{{ s.size - 2 }}px;color:#555">Thank you for your business &mdash; visit again!<br>No exchange without receipt.</div>
+</div></body></html>

@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:#fff;width:760px;font:{{ s.size }}px '{{ s.font }}','Segoe UI',sans-serif;color:#1f2937}
+.wrap{padding:26px 32px}
+.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:4px solid {{ s.accent }}}
+.ur{font-size:{{ s.size + 12 }}px;font-family:'Urdu Typesetting','Segoe UI','Arial',sans-serif;color:{{ s.accent }}}
+table{width:100%;border-collapse:collapse}.items th{text-align:left;border-bottom:2px solid #374151;padding:6px}.items td{padding:6px;border-bottom:1px dotted #9ca3af}
+.r{text-align:right}
+</style></head><body><div class="wrap">
+<div class="top" data-region="vendor">
+  <div>
+    <div style="font-size:{{ s.size + 6 }}px;font-weight:bold" data-field="vendor_name">{{ d.vendor_name }}</div>
+    <div>{{ d.address }}</div><div>{{ d.phone }}</div>
+    <div>NTN: <span data-field="ntn">{{ d.ntn }}</span> &middot; STRN: <span data-field="strn">{{ d.strn }}</span></div>
+  </div>
+  <div class="ur" dir="rtl">{{ d.vendor_urdu }}</div>
+</div>
+<div data-region="meta" style="display:flex;justify-content:space-between;margin:14px 0">
+  <div><b>Invoice</b> <span data-field="invoice_number">{{ d.invoice_number }}</span><br>Billed to: {{ d.customer }}</div>
+  <div class="r">Issued: <span data-field="invoice_date">{{ d.invoice_date|fmtdate(s.date_fmt) }}</span><br>Payment: {{ d.payment }}</div>
+</div>
+<div data-region="table"><table class="items">
+<tr><th>Service / Item</th><th>Qty</th><th class="r">Rate (PKR)</th><th class="r">Amount (PKR)</th></tr>
+{% for li in d.line_items %}<tr><td>{{ li.description }}</td><td>{{ li.quantity|qty }}</td><td class="r">{{ li.unit_price|money('plain') }}</td><td class="r">{{ li.amount|money('plain') }}</td></tr>{% endfor %}
+</table></div>
+<div data-region="totals" style="margin-top:12px"><table style="width:310px;margin-left:auto">
+<tr><td>Subtotal</td><td class="r" data-field="subtotal">{{ d.subtotal|money(s.money) }}</td></tr>
+<tr><td>Provincial Sales Tax <span data-field="tax_rate">{{ d.tax_rate|qty }}%</span></td><td class="r" data-field="sales_tax">{{ d.sales_tax|money(s.money) }}</td></tr>
+<tr style="font-weight:bold;font-size:{{ s.size + 4 }}px;background:#f3f4f6"><td>Amount Due</td><td class="r" data-field="total">{{ d.total|money(s.money) }}</td></tr>
+</table></div>
+<div data-region="other" style="margin-top:30px;display:flex;justify-content:space-between;color:#6b7280">
+  <div>Authorized signature: ____________________</div><div dir="rtl">شکریہ — آپ کی مہربانی</div></div>
+</div></body></html>

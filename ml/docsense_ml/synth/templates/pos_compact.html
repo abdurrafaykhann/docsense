@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:#fff;width:320px;font:{{ s.size - 1 }}px '{{ s.mono }}',monospace;color:#000}
+.wrap{padding:10px 8px}
+.row{display:flex;justify-content:space-between}
+hr{border:0;border-top:1px solid #000;margin:5px 0}
+</style></head><body><div class="wrap">
+<div data-region="vendor">
+  <div style="font-weight:bold;font-size:{{ s.size + 3 }}px" data-field="vendor_name">{{ d.vendor_name|upper }}</div>
+  <div>{{ d.address }}</div>
+  <div>NTN:<span data-field="ntn">{{ d.ntn }}</span></div>
+  <div>STRN:<span data-field="strn">{{ d.strn }}</span></div>
+</div>
+<hr>
+<div data-region="meta">
+  <div class="row"><span>INV:<span data-field="invoice_number">{{ d.invoice_number }}</span></span><span data-field="invoice_date">{{ d.invoice_date|fmtdate(s.date_fmt) }}</span></div>
+  <div>CASHIER: {{ d.customer.split()[0] }} &nbsp; PAY: {{ d.payment|upper }}</div>
+</div>
+<hr>
+<div data-region="table">
+{% for li in d.line_items %}<div>{{ li.description }}</div><div class="row"><span>{{ li.quantity|qty }} x {{ li.unit_price|money('plain') }}</span><span>{{ li.amount|money('plain') }}</span></div>{% endfor %}
+</div>
+<hr>
+<div data-region="totals">
+  <div class="row"><span>SUBTOTAL</span><span data-field="subtotal">{{ d.subtotal|money(s.money) }}</span></div>
+  <div class="row"><span>GST <span data-field="tax_rate">{{ d.tax_rate|qty }}%</span></span><span data-field="sales_tax">{{ d.sales_tax|money(s.money) }}</span></div>
+  <div class="row" style="font-weight:bold;font-size:{{ s.size + 3 }}px"><span>TOTAL</span><span data-field="total">{{ d.total|money(s.money) }}</span></div>
+</div>
+<hr>
+<div data-region="other" style="text-align:center">*** THANK YOU ***<br>FBR POS Invoice Verification<br>Scan QR / SMS to 9966</div>
+</div></body></html>

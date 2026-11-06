@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:#fff;width:380px;font:{{ s.size }}px '{{ s.mono }}',monospace;color:#111}
+.wrap{padding:14px 12px}
+.c{text-align:center}.r{text-align:right}
+hr{border:0;border-top:1px dashed #333;margin:8px 0}
+table{width:100%;border-collapse:collapse;font-size:{{ s.size - 1 }}px}td,th{padding:2px 5px;vertical-align:top}
+.big{font-size:{{ s.size + 5 }}px;font-weight:bold}
+</style></head><body><div class="wrap">
+<div data-region="vendor" class="c">
+  <div class="big" data-field="vendor_name">{{ d.vendor_name }}</div>
+  {% if d.template == 'thermal' and d.vendor_urdu and s.urdu %}<div dir="rtl" style="font-size:{{ s.size + 3 }}px">{{ d.vendor_urdu }}</div>{% endif %}
+  <div>{{ d.address }}</div><div>Tel: {{ d.phone }}</div>
+  <div>NTN: <span data-field="ntn">{{ d.ntn }}</span></div>
+  <div>STRN: <span data-field="strn">{{ d.strn }}</span></div>
+</div>
+<hr>
+<div data-region="meta">
+  <div>Invoice #: <span data-field="invoice_number">{{ d.invoice_number }}</span></div>
+  <div>Date: <span data-field="invoice_date">{{ d.invoice_date|fmtdate(s.date_fmt) }}</span></div>
+  <div>Payment: {{ d.payment }}</div>
+</div>
+<hr>
+<div data-region="table"><table>
+<tr><th style="text-align:left">Item</th><th>Qty</th><th class="r">Price</th><th class="r">Amt</th></tr>
+{% for li in d.line_items %}<tr><td>{{ li.description }}</td><td class="c">{{ li.quantity|qty }}</td><td class="r">{{ li.unit_price|money('plain') }}</td><td class="r">{{ li.amount|money('plain') }}</td></tr>{% endfor %}
+</table></div>
+<hr>
+<div data-region="totals"><table>
+<tr><td>Subtotal</td><td class="r" data-field="subtotal">{{ d.subtotal|money(s.money) }}</td></tr>
+<tr><td>Sales Tax (<span data-field="tax_rate">{{ d.tax_rate|qty }}%</span>)</td><td class="r" data-field="sales_tax">{{ d.sales_tax|money(s.money) }}</td></tr>
+<tr class="big"><td>TOTAL</td><td class="r" data-field="total">{{ d.total|money(s.money) }}</td></tr>
+</table></div>
+<hr>
+<div data-region="other" class="c">Thank you for shopping!<br>Goods once sold will not be returned or exchanged.<div style="margin-top:8px;letter-spacing:3px;font-size:28px">||| || ||| | |||| ||</div></div>
+</div></body></html>

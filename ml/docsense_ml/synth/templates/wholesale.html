@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:#fff;width:820px;font:{{ s.size }}px '{{ s.font }}',sans-serif;color:#222}
+.wrap{padding:24px 28px}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px double {{ s.accent }};padding-bottom:12px}
+.box{border:1px solid #888;padding:8px 12px;min-width:250px}
+table{width:100%;border-collapse:collapse}
+.items th{background:{{ s.accent }};color:#fff;padding:6px;text-align:left}
+.items td{border-bottom:1px solid #ccc;padding:6px}
+.r{text-align:right}
+</style></head><body><div class="wrap">
+<div class="hd">
+  <div data-region="vendor">
+    <div style="font-size:{{ s.size + 8 }}px;font-weight:bold;color:{{ s.accent }}" data-field="vendor_name">{{ d.vendor_name }}</div>
+    <div>{{ d.address }}</div><div>Ph: {{ d.phone }}</div>
+    <div>NTN # <span data-field="ntn">{{ d.ntn }}</span> &nbsp; STRN # <span data-field="strn">{{ d.strn }}</span></div>
+  </div>
+  <div class="box" data-region="meta">
+    <div style="font-weight:bold;margin-bottom:4px">TAX INVOICE</div>
+    <div>No: <span data-field="invoice_number">{{ d.invoice_number }}</span></div>
+    <div>Date: <span data-field="invoice_date">{{ d.invoice_date|fmtdate(s.date_fmt) }}</span></div>
+    <div>Terms: {{ d.payment }}</div>
+  </div>
+</div>
+<div style="margin:10px 0">Bill to: <b>{{ d.customer }}</b> &nbsp; (NTN {{ d.customer_ntn }})</div>
+<div data-region="table"><table class="items">
+<tr><th>Sr</th><th>Item Description</th><th>HS Code</th><th>Qty</th><th class="r">Unit Price</th><th class="r">Amount</th></tr>
+{% for li in d.line_items %}<tr><td>{{ loop.index }}</td><td>{{ li.description }}</td><td>{{ (li.description|length * 1117) % 9000 + 1000 }}.{{ (li.description|length * 31) % 90 + 10 }}</td><td>{{ li.quantity|qty }}</td><td class="r">{{ li.unit_price|money('plain') }}</td><td class="r">{{ li.amount|money('plain') }}</td></tr>{% endfor %}
+</table></div>
+<div style="display:flex;justify-content:space-between;margin-top:14px;align-items:flex-start">
+  <div data-region="other" style="max-width:380px;font-size:{{ s.size - 2 }}px;color:#555">
+    <b>Bank details:</b> Meezan Bank &middot; A/C PK{{ d.ntn|replace('-','') }}00112233<br>
+    Terms: Goods remain property of seller until paid in full.</div>
+  <div data-region="totals" style="width:300px"><table>
+    <tr><td>Taxable value</td><td class="r" data-field="subtotal">{{ d.subtotal|money(s.money) }}</td></tr>
+    <tr><td>Sales tax (<span data-field="tax_rate">{{ d.tax_rate|qty }}%</span>)</td><td class="r" data-field="sales_tax">{{ d.sales_tax|money(s.money) }}</td></tr>
+    <tr style="font-weight:bold;font-size:{{ s.size + 3 }}px;border-top:2px solid #222"><td>Invoice total</td><td class="r" data-field="total">{{ d.total|money(s.money) }}</td></tr>
+  </table></div>
+</div>
+</div></body></html>

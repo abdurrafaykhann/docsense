@@ -15,3 +15,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"docsense_ml/synth/render.py" = ["E501"]
+"docsense_ml/synth/providers.py" = ["E501"]
