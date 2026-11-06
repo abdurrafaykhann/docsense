@@ -16,3 +16,9 @@ ml/.cache/
 ml/data/cord/
 ml/data/*/images/
 ml/runs/
+ml/data/
+ml/runs/
+ml/runs_train.log
+ml/models/
+mlflow.db
+mlruns/

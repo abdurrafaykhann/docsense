@@ -143,6 +143,7 @@ def main() -> None:
     ap.add_argument("--batch", type=int, default=16)
     ap.add_argument("--base", default="yolo11n.pt")
     ap.add_argument("--runs", default="ml/runs")
+    ap.add_argument("--reuse", action="store_true", help="skip training if finished weights exist")
     ap.add_argument("--results", default="docs/eval-results")
     ap.add_argument("--tracking", default="sqlite:///ml/runs/mlflow.db")
     a = ap.parse_args()
@@ -162,8 +163,21 @@ def main() -> None:
         params = {"exp": exp, "aug": level, "epochs": a.epochs, "imgsz": a.imgsz, "batch": a.batch,
                   "base": a.base, "real_mix": exp == "d"}  # fmt: skip
         print(f"=== experiment {exp}: {desc}")
-        best = yolo.train(data, f"exp-{exp}", epochs=a.epochs, imgsz=a.imgsz, batch=a.batch,
-                          base=a.base, project=runs / "yolo")  # fmt: skip
+        existing = runs / "yolo" / f"exp-{exp}" / "weights" / "best.pt"
+        rows = runs / "yolo" / f"exp-{exp}" / "results.csv"
+        done = rows.exists() and len(rows.read_text().splitlines()) > a.epochs
+        if a.reuse and done and existing.exists():
+            best = existing
+        else:
+            best = yolo.train(
+                data,
+                f"exp-{exp}",
+                epochs=a.epochs,
+                imgsz=a.imgsz,
+                batch=a.batch,
+                base=a.base,
+                project=runs / "yolo",
+            )
         trained[exp] = best
         results = {
             "synthetic-hard": yolo.evaluate(best, synth / "valfull" / "data.yaml", imgsz=a.imgsz),

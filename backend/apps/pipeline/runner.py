@@ -67,6 +67,9 @@ def run_pipeline(document_id: int, *, ocr=None, llm=None, layout=_UNSET) -> Docu
             publish(doc, "save", "running")
             _persist(doc, res, provider)
             publish(doc, "save", "done", "needs review" if res.needs_review else "ok")
+            from apps.rag.service import index_quietly
+
+            index_quietly(doc)
     except Exception as exc:  # noqa: BLE001
         log.exception("pipeline failed for document %s at %s", document_id, step)
         doc.status = Document.Status.FAILED

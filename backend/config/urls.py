@@ -9,4 +9,5 @@ urlpatterns = [
     path("api/v1/", include("apps.documents.urls")),
     path("api/v1/", include("apps.evaluation.urls")),
     path("api/v1/", include("apps.learning.urls")),
+    path("api/v1/", include("apps.rag.urls")),
 ]

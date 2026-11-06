@@ -10,3 +10,5 @@ DOCSENSE_THROTTLE_RATES = {"auth": "1000/min", "user": "1000/min", "apikey": "10
 OCR_ENGINE = "fake"
 MEDIA_ROOT = BASE_DIR / "test_media"
 LAYOUT_MODEL_PATH = ""
+EMBEDDER = "hash"
+RERANKER = "overlap"

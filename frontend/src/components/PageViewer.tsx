@@ -12,6 +12,8 @@ export interface OverlayBox {
 interface Props {
   src: string | null
   boxes: OverlayBox[]
+  /** Source passage of a citation, drawn as a yellow highlight. */
+  highlight?: BBox | null
   /** Layout regions drawn as coloured outlines with a class label. */
   regions?: { cls: string; bbox: BBox; score: number }[]
   /** When set, region boxes are clickable (layout editing). */
@@ -25,6 +27,7 @@ interface Props {
 export default function PageViewer({
   src,
   boxes,
+  highlight,
   regions,
   regionEdit,
   onSelect,
@@ -61,6 +64,13 @@ export default function PageViewer({
         <img src={src} alt="Document page" className="block w-full" draggable={false} />
       ) : (
         <div className="aspect-[3/4] w-full animate-pulse" />
+      )}
+      {highlight && (
+        <div
+          data-testid="citation-highlight"
+          className="pointer-events-none absolute animate-pulse border-2 border-yellow-300 bg-yellow-300/30"
+          style={bboxToStyle(highlight)}
+        />
       )}
       {regions?.map((r, i) => (
         <div

@@ -145,6 +145,9 @@ def approve(ext: Extraction, user) -> Invoice:
         field_boxes={f.name: f.bbox for f in ext.fields.all() if f.bbox},
         corrected=corrected,
     )
+    from apps.rag.service import index_quietly
+
+    index_quietly(doc)  # refresh the summary chunk with the human-corrected values
     return invoice
 
 

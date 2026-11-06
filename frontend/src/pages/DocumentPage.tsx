@@ -23,7 +23,18 @@ const tone = (c: number) =>
 const input =
   'w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-sm outline-none focus:border-indigo-400'
 
-export default function DocumentPage({ workspaceId, id }: { workspaceId: number; id: number }) {
+export default function DocumentPage({
+  workspaceId,
+  id,
+  initialPage = 1,
+  highlight = null,
+}: {
+  workspaceId: number
+  id: number
+  initialPage?: number
+  highlight?: BBox | null
+}) {
+  const [page, setPage] = useState(initialPage)
   const [doc, setDoc] = useState<DocDetail | null>(null)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
@@ -66,7 +77,7 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
   useEffect(() => {
     if (!hasPages) return
     let url: string | null = null
-    pageImageUrl(workspaceId, id, 1).then(
+    pageImageUrl(workspaceId, id, page).then(
       (u) => {
         url = u
         setImageUrl(u)
@@ -76,7 +87,7 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
     return () => {
       if (url) URL.revokeObjectURL(url)
     }
-  }, [hasPages, workspaceId, id, doc?.extraction?.version])
+  }, [hasPages, workspaceId, id, page, doc?.extraction?.version])
 
   const ext = doc?.extraction ?? null
   const setExt = (e: Extraction) => setDoc((d) => (d ? { ...d, extraction: e } : d))
@@ -85,14 +96,14 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
   const boxes = useMemo(
     () =>
       (ext?.fields ?? [])
-        .filter((f) => f.bbox && f.page === 1)
+        .filter((f) => f.bbox && f.page === page)
         .map((f) => ({
           name: f.name,
           bbox: f.bbox as BBox,
           tone: toneFor(f.confidence, f.flags, f.reviewed),
           selected: f.name === selected,
         })),
-    [ext, selected],
+    [ext, selected, page],
   )
 
   async function saveField(name: string, value: string, current: string) {
@@ -113,7 +124,7 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
     }
     if (!selected) return
     setDrawing(false)
-    setExt(await patchField(workspaceId, id, selected, { bbox, page: 1 }))
+    setExt(await patchField(workspaceId, id, selected, { bbox, page }))
   }
 
   async function saveLayout() {
@@ -121,7 +132,7 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
     await putRegions(
       workspaceId,
       id,
-      1,
+      page,
       draft.map((r) => ({ cls: r.cls, bbox: r.bbox })),
     )
     setDraft(null)
@@ -141,6 +152,7 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
   }
 
   if (!doc) return <p className="text-slate-400">Loading…</p>
+  const curPage = doc.pages.find((p) => p.number === page) ?? doc.pages[0]
 
   return (
     <article className="flex flex-col gap-4">
@@ -162,7 +174,7 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
           >
             Reprocess
           </button>
-          {(doc.pages[0]?.regions.length ?? 0) > 0 && (
+          {(curPage?.regions.length ?? 0) > 0 && (
             <label className="flex items-center gap-1.5 rounded-lg border border-slate-700 px-3 py-1.5 text-sm">
               <input
                 type="checkbox"
@@ -176,7 +188,7 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
             <button
               className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:bg-slate-800"
               onClick={() => {
-                setDraft((doc.pages[0]?.regions ?? []).map((r) => ({ ...r })))
+                setDraft((curPage?.regions ?? []).map((r) => ({ ...r })))
                 setRegionSel(null)
               }}
             >
@@ -249,15 +261,33 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
 
       {ext && (
         <div className="grid gap-5 lg:grid-cols-2">
-          <PageViewer
-            src={imageUrl}
-            boxes={boxes}
-            regions={draft ?? (showRegions ? (doc.pages[0]?.regions ?? []) : undefined)}
-            regionEdit={draft ? { selected: regionSel, onSelect: setRegionSel } : undefined}
-            onSelect={setSelected}
-            drawing={drawing || draft !== null}
-            onDraw={(b) => void saveBox(b)}
-          />
+          <div className="flex flex-col gap-2">
+            {doc.pages.length > 1 && (
+              <div className="flex gap-1 text-xs" role="tablist" aria-label="Pages">
+                {doc.pages.map((p) => (
+                  <button
+                    key={p.number}
+                    role="tab"
+                    aria-selected={p.number === page}
+                    onClick={() => setPage(p.number)}
+                    className={`rounded px-2 py-1 ${p.number === page ? 'bg-indigo-500' : 'bg-slate-800'}`}
+                  >
+                    Page {p.number}
+                  </button>
+                ))}
+              </div>
+            )}
+            <PageViewer
+              src={imageUrl}
+              boxes={boxes}
+              highlight={highlight}
+              regions={draft ?? (showRegions ? (curPage?.regions ?? []) : undefined)}
+              regionEdit={draft ? { selected: regionSel, onSelect: setRegionSel } : undefined}
+              onSelect={setSelected}
+              drawing={drawing || draft !== null}
+              onDraw={(b) => void saveBox(b)}
+            />
+          </div>
 
           <div className="flex flex-col gap-4">
             <p className="text-sm text-slate-400">

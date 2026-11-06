@@ -2,3 +2,4 @@
 python-doctr>=1.0
 torch>=2.4
 torchvision>=0.19
+sentence-transformers>=3.0
