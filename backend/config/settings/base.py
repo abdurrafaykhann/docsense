@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "apps.learning",
     "apps.rag",
     "apps.analytics",
+    "apps.agent",
 ]
 
 MIDDLEWARE = [

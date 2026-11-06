@@ -1,5 +1,6 @@
 import { useAuth } from './auth/AuthContext'
 import { useHashLocation } from './hooks/useHashRoute'
+import AgentPage from './pages/AgentPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import AskPage from './pages/AskPage'
 import AdminPage from './pages/AdminPage'
@@ -39,6 +40,7 @@ export default function App() {
         <strong className="text-lg">DocSense</strong>
         {link('#/documents', 'Documents', !section || section === 'documents')}
         {link('#/analytics', 'Analytics', section === 'analytics')}
+        {link('#/spending', 'Spending AI', section === 'spending')}
         {link('#/ask', 'Ask', section === 'ask')}
         {link('#/evaluation', 'Evaluation', section === 'evaluation')}
         {me.user.is_staff && link('#/admin', 'Admin', section === 'admin')}
@@ -50,6 +52,8 @@ export default function App() {
         <AdminPage />
       ) : section === 'evaluation' ? (
         <EvaluationPage />
+      ) : section === 'spending' ? (
+        <AgentPage workspaceId={workspaceId} />
       ) : section === 'analytics' ? (
         <AnalyticsPage workspaceId={workspaceId} />
       ) : section === 'ask' ? (

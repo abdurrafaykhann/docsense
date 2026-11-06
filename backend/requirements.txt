@@ -19,3 +19,4 @@ pillow>=10.3
 rapidfuzz>=3.9
 scikit-learn>=1.4
 imagehash>=4.3
+langgraph>=1.0
