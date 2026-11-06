@@ -13,4 +13,7 @@ urlpatterns = [
     path(f"{W}<int:pk>/line-items/", views.LineItemsEdit.as_view(), name="line-items-edit"),
     path(f"{W}<int:pk>/approve/", views.Approve.as_view(), name="document-approve"),
     path("workspaces/<int:workspace_id>/review/queue/", views.ReviewQueue.as_view(), name="queue"),
+    path(
+        f"{W}<int:pk>/pages/<int:number>/regions/", views.RegionsEdit.as_view(), name="regions-edit"
+    ),
 ]

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { bboxToStyle, pointsToBbox, TONE_CLASS } from '../lib/bbox'
+import { bboxToStyle, pointsToBbox, REGION_COLOR, TONE_CLASS } from '../lib/bbox'
 import type { BBox, Tone } from '../lib/bbox'
 
 export interface OverlayBox {
@@ -12,13 +12,25 @@ export interface OverlayBox {
 interface Props {
   src: string | null
   boxes: OverlayBox[]
+  /** Layout regions drawn as coloured outlines with a class label. */
+  regions?: { cls: string; bbox: BBox; score: number }[]
+  /** When set, region boxes are clickable (layout editing). */
+  regionEdit?: { selected: number | null; onSelect: (index: number) => void }
   onSelect: (name: string) => void
   /** When true, dragging on the image draws a replacement box. */
   drawing?: boolean
   onDraw?: (bbox: BBox) => void
 }
 
-export default function PageViewer({ src, boxes, onSelect, drawing, onDraw }: Props) {
+export default function PageViewer({
+  src,
+  boxes,
+  regions,
+  regionEdit,
+  onSelect,
+  drawing,
+  onDraw,
+}: Props) {
   const wrap = useRef<HTMLDivElement>(null)
   const [drag, setDrag] = useState<{
     a: { x: number; y: number }
@@ -50,6 +62,29 @@ export default function PageViewer({ src, boxes, onSelect, drawing, onDraw }: Pr
       ) : (
         <div className="aspect-[3/4] w-full animate-pulse" />
       )}
+      {regions?.map((r, i) => (
+        <div
+          key={`region-${i}`}
+          data-testid={`region-${r.cls}`}
+          data-selected={regionEdit?.selected === i}
+          role={regionEdit ? 'button' : undefined}
+          aria-label={regionEdit ? `region ${r.cls} ${i}` : undefined}
+          onClick={(e) => {
+            if (!regionEdit) return
+            e.stopPropagation()
+            regionEdit.onSelect(i)
+          }}
+          className={`absolute border-2 ${regionEdit?.selected === i ? 'border-solid ring-2 ring-white' : 'border-dotted'} ${regionEdit && !drawing ? '' : 'pointer-events-none'}`}
+          style={{ ...bboxToStyle(r.bbox), borderColor: REGION_COLOR[r.cls] }}
+        >
+          <span
+            className="absolute -top-0 left-0 px-1 text-[10px] font-semibold text-white"
+            style={{ background: REGION_COLOR[r.cls] }}
+          >
+            {r.cls} {Math.round(r.score * 100)}%
+          </span>
+        </div>
+      ))}
       {boxes.map((b) => (
         <button
           key={b.name}

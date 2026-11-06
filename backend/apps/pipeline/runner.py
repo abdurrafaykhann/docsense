@@ -9,6 +9,7 @@ from django.core.files.base import ContentFile
 from django.db import transaction
 
 from apps.documents.models import Document, Extraction, FieldValue, Page
+from apps.documents.models import Region as RegionRow
 from apps.llm import context as llm_context
 from apps.validation.schema import NUMERIC_FIELDS
 
@@ -27,10 +28,14 @@ def _fmt(name: str, value) -> str:
     return str(value)
 
 
-def run_pipeline(document_id: int, *, ocr=None, llm=None) -> Document:
+_UNSET = object()
+
+
+def run_pipeline(document_id: int, *, ocr=None, llm=None, layout=_UNSET) -> Document:
     doc = Document.objects.select_related("workspace").get(pk=document_id)
     ocr = ocr or services.get_ocr()
     llm = llm or services.get_llm()
+    layout = services.get_layout() if layout is _UNSET else layout
     doc.status = Document.Status.PROCESSING
     doc.error = ""
     doc.progress = initial_progress()
@@ -49,7 +54,12 @@ def run_pipeline(document_id: int, *, ocr=None, llm=None) -> Document:
                 publish(doc, name, status, detail)
 
             res = core.process(
-                images, ocr, llm, max_chars=settings.LLM_MAX_PROMPT_CHARS, on_step=on_step
+                images,
+                ocr,
+                llm,
+                max_chars=settings.LLM_MAX_PROMPT_CHARS,
+                on_step=on_step,
+                layout=layout,
             )
             provider = getattr(getattr(llm, "providers", [None])[0], "name", "") or ""
 
@@ -79,6 +89,10 @@ def _persist(doc, res, provider):
             words=[w.as_dict() for w in words_by_page.get(i, [])],
         )
         page.image.save(f"{doc.id}-{i}.jpg", ContentFile(encode_jpeg(img)), save=True)
+        RegionRow.objects.bulk_create(
+            RegionRow(page=page, cls=r.cls, bbox=r.bbox, score=r.score, source="model")
+            for r in res.regions_by_page.get(i, [])
+        )
 
     version = (
         doc.extractions.order_by("-version").values_list("version", flat=True).first() or 0

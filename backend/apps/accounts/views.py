@@ -29,7 +29,7 @@ def memberships_payload(user) -> list[dict]:
 
 
 def user_payload(user) -> dict:
-    return {"id": user.pk, "email": user.email, "name": user.name}
+    return {"id": user.pk, "email": user.email, "name": user.name, "is_staff": user.is_staff}
 
 
 class SignupSerializer(serializers.Serializer):

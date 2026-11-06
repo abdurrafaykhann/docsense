@@ -54,3 +54,23 @@ JPEG, paper texture, creases, stains, shadows, low light, desk background, parti
 PYTHONPATH=ml python -m docsense_ml.synth.build --out ml/data/synth --n 600 --aug full
 PYTHONPATH=ml python -m docsense_ml.synth.preview      # regenerates the figure above
 ```
+
+## Layout model, pipeline integration and active learning (M6-M8)
+
+* **Training** (`ml/docsense_ml/layout/`): Ultralytics YOLO11n fine-tuned on the synthetic invoices with
+  *our* Albumentations pipeline as the only augmentation (built-in mosaic/flip/HSV disabled so the ablation is
+  clean). Every run is tracked in MLflow (`ml/runs/mlflow.db`). Experiments: **a** no aug, **b** basic aug,
+  **c** full aug, **d** full aug + 30 real CORD receipts (human table/totals boxes + pseudo-labels for the rest).
+  `python -m docsense_ml.layout.experiments --epochs 8 --imgsz 416`.
+* **Real evaluation:** CORD-v2 test receipts with *table* and *totals* boxes derived from CORD's own word-level
+  annotations (65 held-out receipts; 30 are used only for few-shot mixing in experiment d). CORD does not annotate
+  vendor/meta/other: use `ml/tools/labeler.html` (offline, draw boxes, hotkeys) + `ml/tools/import_labels.py`
+  to add your own real labels for those classes.
+* **Pipeline:** `layout` step -> OCR words are assigned to regions -> the LLM sees `[VENDOR] [META] [TABLE]
+  [TOTALS]` sections (footer truncated). If no table/totals is found the whole page is used (fallback).
+  The detector is the active model from the registry, else `ml/models/layout-current.pt`, else disabled.
+* **Active learning:** correct fields / draw layout regions on the review screen, approve ->
+  a `TrainingSample` is stored. `manage.py retrain_layout --epochs 5 [--activate]` (or the Admin page button,
+  staff only) fine-tunes the current model on approved documents, evaluates **old vs new** on synthetic-hard,
+  CORD-real and a feedback holdout, and recommends activation only if nothing drops by more than 2 points.
+  `manage.py activate_model <name>` / `--rollback` switch models.

@@ -10,7 +10,17 @@ from django.utils import timezone
 from apps.validation import rules
 from apps.validation.schema import SCALAR_FIELDS, InvoiceExtraction, LineItem, to_number
 
-from .models import AuditEvent, Extraction, FieldValue, Invoice, InvoiceLineItem, Vendor
+from .models import (
+    AuditEvent,
+    Extraction,
+    FieldValue,
+    Invoice,
+    InvoiceLineItem,
+    Region,
+    Vendor,
+)
+
+REGION_CLASSES = {"vendor", "meta", "table", "totals", "other"}
 
 
 def effective_invoice(ext: Extraction) -> InvoiceExtraction:
@@ -123,5 +133,38 @@ def approve(ext: Extraction, user) -> Invoice:
     ext.save(update_fields=["needs_review"])
     doc.status = doc.Status.DONE
     doc.save(update_fields=["status", "updated_at"])
+    corrected = doc.audit.filter(
+        action__in=["field_edited", "box_edited", "regions_edited"]
+    ).exists()
     audit(doc, user, "approved", unresolved=[i["code"] for i in ext.issues])
+    from apps.learning.services import capture_sample  # lazy: avoids an import cycle
+
+    capture_sample(
+        doc,
+        truth=inv.model_dump(mode="json"),
+        field_boxes={f.name: f.bbox for f in ext.fields.all() if f.bbox},
+        corrected=corrected,
+    )
     return invoice
+
+
+@transaction.atomic
+def edit_regions(document, page_number: int, regions: list[dict], user) -> list[Region]:
+    """Replace a page's layout regions with human-drawn ones (training signal for M8)."""
+    page = document.pages.get(number=page_number)
+    clean = []
+    for r in regions:
+        if r.get("cls") not in REGION_CLASSES:
+            raise ValueError(f"Unknown region class {r.get('cls')!r}")
+        box = [min(max(float(v), 0.0), 1.0) for v in r["bbox"]]
+        if len(box) != 4:
+            raise ValueError("bbox must be [x0, y0, x1, y1]")
+        x0, y0, x1, y1 = box
+        clean.append((r["cls"], [min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1)]))
+    before = [{"cls": r.cls, "bbox": r.bbox} for r in page.regions.all()]
+    page.regions.all().delete()
+    rows = Region.objects.bulk_create(
+        Region(page=page, cls=c, bbox=b, score=1.0, source="human") for c, b in clean
+    )
+    audit(document, user, "regions_edited", page=page_number, before=len(before), after=len(rows))
+    return rows

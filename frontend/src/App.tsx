@@ -1,5 +1,6 @@
 import { useAuth } from './auth/AuthContext'
 import { useHashRoute } from './hooks/useHashRoute'
+import AdminPage from './pages/AdminPage'
 import DocumentPage from './pages/DocumentPage'
 import DocumentsPage from './pages/DocumentsPage'
 import EvaluationPage from './pages/EvaluationPage'
@@ -29,10 +30,13 @@ export default function App() {
         <strong className="text-lg">DocSense</strong>
         {link('#/documents', 'Documents', !section || section === 'documents')}
         {link('#/evaluation', 'Evaluation', section === 'evaluation')}
+        {me.user.is_staff && link('#/admin', 'Admin', section === 'admin')}
         {link('#/settings', 'Settings', section === 'settings')}
       </nav>
       {section === 'settings' ? (
         <SettingsPage />
+      ) : section === 'admin' && me.user.is_staff ? (
+        <AdminPage />
       ) : section === 'evaluation' ? (
         <EvaluationPage />
       ) : section === 'documents' && arg ? (

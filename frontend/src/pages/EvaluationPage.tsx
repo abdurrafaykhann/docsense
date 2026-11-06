@@ -20,6 +20,9 @@ interface Metrics {
   validation_pass_rate?: number
   mean_prompt_tokens_est?: number | null
   llm_requests?: number
+  map50?: number
+  map50_95?: number
+  per_class_ap50?: Record<string, number | null>
 }
 
 interface Run {
@@ -34,6 +37,8 @@ interface Run {
   metrics: Metrics
 }
 
+const CLASS_NAMES = ['vendor', 'meta', 'table', 'totals', 'other']
+
 const pct = (v: number | null | undefined) => (v == null ? '—' : `${(v * 100).toFixed(1)}%`)
 
 export default function EvaluationPage() {
@@ -45,7 +50,9 @@ export default function EvaluationPage() {
   }, [])
 
   if (!runs) return <p className="text-slate-400">Loading…</p>
-  const selected = runs.find((r) => r.id === open)
+  const extraction = runs.filter((r) => r.kind === 'extraction')
+  const layout = runs.filter((r) => r.kind === 'layout')
+  const selected = extraction.find((r) => r.id === open)
   const th = 'px-2 py-1 text-left font-medium text-slate-400'
 
   return (
@@ -57,8 +64,9 @@ export default function EvaluationPage() {
           <code>manage.py import_eval</code>.
         </p>
       )}
-      {runs.length > 0 && (
+      {extraction.length > 0 && (
         <div className="overflow-x-auto">
+          <h2 className="mb-2 font-semibold">Field extraction</h2>
           <table className="w-full min-w-[720px] text-sm" aria-label="Evaluation runs">
             <thead>
               <tr>
@@ -80,7 +88,7 @@ export default function EvaluationPage() {
               </tr>
             </thead>
             <tbody>
-              {runs.map((r) => (
+              {extraction.map((r) => (
                 <tr
                   key={r.id}
                   className={`cursor-pointer border-t border-slate-800 hover:bg-slate-900 ${open === r.id ? 'bg-slate-900' : ''}`}
@@ -99,6 +107,40 @@ export default function EvaluationPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {layout.length > 0 && (
+        <div className="overflow-x-auto">
+          <h2 className="mb-2 font-semibold">Layout model — mAP@50 per class</h2>
+          <table className="w-full min-w-[720px] text-sm" aria-label="Layout runs">
+            <thead>
+              <tr>
+                {['Experiment', 'Dataset', 'N', 'mAP@50', ...CLASS_NAMES].map((h) => (
+                  <th key={h} className={th}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {layout.map((r) => (
+                <tr key={r.id} className="border-t border-slate-800">
+                  <td className="px-2 py-1.5">{r.arm}</td>
+                  <td className="px-2 py-1.5">{r.dataset}</td>
+                  <td className="px-2 py-1.5">{r.n}</td>
+                  <td className="px-2 py-1.5">{pct(r.metrics.map50)}</td>
+                  {CLASS_NAMES.map((c) => (
+                    <td key={c} className="px-2 py-1.5">
+                      {pct(r.metrics.per_class_ap50?.[c])}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="mt-1 text-xs text-slate-500">
+            “—” = no ground truth for that class in the set (CORD annotates only table and totals).
+          </p>
         </div>
       )}
       {selected?.metrics.per_field && (

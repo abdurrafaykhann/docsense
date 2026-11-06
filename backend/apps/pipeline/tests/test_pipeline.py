@@ -76,7 +76,8 @@ def test_clean_invoice_ends_done_with_boxes_and_pages(doc):
     total = ext.fields.get(name="total")
     assert total.value == "3540" and total.bbox and total.confidence > 0.9
     assert out.pages.get().words  # OCR words stored for the viewer
-    assert all(s["status"] == "done" for s in out.progress.values())
+    assert {s["status"] for s in out.progress.values()} <= {"done", "skipped"}
+    assert out.progress["layout"]["status"] == "skipped"
 
 
 def test_arithmetic_error_routes_to_review_and_flags_field(doc):

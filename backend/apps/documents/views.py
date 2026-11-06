@@ -126,8 +126,16 @@ class DocumentDetail(WorkspaceScoped):
                 **doc_summary(d),
                 "progress": d.progress,
                 "pages": [
-                    {"number": p.number, "width": p.width, "height": p.height}
-                    for p in d.pages.all()
+                    {
+                        "number": p.number,
+                        "width": p.width,
+                        "height": p.height,
+                        "regions": [
+                            {"cls": r.cls, "bbox": r.bbox, "score": r.score, "source": r.source}
+                            for r in p.regions.all()
+                        ],
+                    }
+                    for p in d.pages.all().prefetch_related("regions")
                 ],
                 "extraction": extraction_payload(ext),
                 "audit": [
@@ -221,3 +229,19 @@ class ReviewQueue(WorkspaceScoped):
             rows.append({**doc_summary(d), "confidence": ext.overall_confidence if ext else 0})
         rows.sort(key=lambda r: r["confidence"])  # least confident first
         return Response({"count": len(rows), "documents": rows})
+
+
+class RegionsEdit(_ExtractionView):
+    def put(self, request, workspace_id, pk, number):
+        d = get_object_or_404(Document, pk=pk, workspace_id=workspace_id)
+        get_object_or_404(d.pages, number=number)
+        regions = request.data.get("regions")
+        if not isinstance(regions, list) or len(regions) > 20:
+            raise ValidationError({"regions": "Expected a list of at most 20 regions."})
+        try:
+            rows = review.edit_regions(d, number, regions, self.human(request))
+        except (ValueError, KeyError, TypeError) as exc:
+            raise ValidationError({"regions": str(exc)}) from exc
+        return Response(
+            [{"cls": r.cls, "bbox": r.bbox, "score": r.score, "source": r.source} for r in rows]
+        )

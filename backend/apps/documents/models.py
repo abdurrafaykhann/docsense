@@ -44,6 +44,19 @@ class Page(models.Model):
         constraints = [models.UniqueConstraint(fields=["document", "number"], name="uniq_page")]
 
 
+class Region(models.Model):
+    """Layout region on a page: found by the model, or drawn/fixed by a human (M8)."""
+
+    page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name="regions")
+    cls = models.CharField(max_length=12)  # vendor | meta | table | totals | other
+    bbox = models.JSONField()  # normalised [x0, y0, x1, y1]
+    score = models.FloatField(default=1.0)
+    source = models.CharField(max_length=10, default="model")  # model | human
+
+    class Meta:
+        ordering = ["id"]
+
+
 class Extraction(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="extractions")
     version = models.PositiveIntegerField(default=1)

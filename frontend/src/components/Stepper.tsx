@@ -5,6 +5,7 @@ const LABEL: Record<string, string> = {
   load: 'Load',
   cleanup: 'Clean up',
   ocr: 'OCR',
+  layout: 'Layout',
   extract: 'Extract',
   validate: 'Validate',
   save: 'Save',

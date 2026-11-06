@@ -62,14 +62,26 @@ export interface AuditRow {
   at: string
 }
 
+export interface LayoutRegion {
+  cls: 'vendor' | 'meta' | 'table' | 'totals' | 'other'
+  bbox: [number, number, number, number]
+  score: number
+  source: 'model' | 'human'
+}
+
 export interface DocDetail extends DocSummary {
   audit: AuditRow[]
   progress: Record<string, StepState>
-  pages: { number: number; width: number; height: number }[]
+  pages: {
+    number: number
+    width: number
+    height: number
+    regions: LayoutRegion[]
+  }[]
   extraction: Extraction | null
 }
 
-export const STEP_ORDER = ['load', 'cleanup', 'ocr', 'extract', 'validate', 'save']
+export const STEP_ORDER = ['load', 'cleanup', 'ocr', 'layout', 'extract', 'validate', 'save']
 
 export const listDocuments = (ws: number) => api<DocSummary[]>(`/workspaces/${ws}/documents/`)
 export const getDocument = (ws: number, id: number) =>
@@ -141,3 +153,14 @@ export const reviewQueue = (ws: number) =>
   api<{ count: number; documents: (DocSummary & { confidence: number })[] }>(
     `/workspaces/${ws}/review/queue/`,
   )
+
+export const putRegions = (
+  ws: number,
+  id: number,
+  page: number,
+  regions: { cls: string; bbox: number[] }[],
+) =>
+  api<LayoutRegion[]>(`${base(ws, id)}/pages/${page}/regions/`, {
+    method: 'PUT',
+    json: { regions },
+  })

@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "apps.documents",
     "apps.pipeline",
     "apps.evaluation",
+    "apps.learning",
 ]
 
 MIDDLEWARE = [
@@ -151,3 +152,6 @@ ALLOWED_UPLOAD_TYPES = {
 }
 MAX_PAGES_PER_DOC = int(env("MAX_PAGES_PER_DOC", "6"))
 LLM_MAX_PROMPT_CHARS = int(env("LLM_MAX_PROMPT_CHARS", "12000"))
+LAYOUT_MODEL_PATH = env(
+    "LAYOUT_MODEL_PATH", str(BASE_DIR.parent / "ml" / "models" / "layout-current.pt")
+)

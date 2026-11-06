@@ -46,3 +46,33 @@ test('empty state explains how to produce results', async () => {
   render(<EvaluationPage />)
   expect(await screen.findByText(/No results yet/)).toBeInTheDocument()
 })
+
+test('layout runs show per-class AP50 with dashes where a class has no ground truth', async () => {
+  vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+    new Response(
+      JSON.stringify([
+        {
+          id: 5,
+          kind: 'layout',
+          dataset: 'cord-real-test',
+          arm: 'exp-c: full aug',
+          n: 65,
+          git_sha: 'abc',
+          created_at: '',
+          config: {},
+          metrics: {
+            map50: 0.61,
+            per_class_ap50: { vendor: null, meta: null, table: 0.72, totals: 0.5, other: null },
+          },
+        },
+      ]),
+      { headers: { 'Content-Type': 'application/json' } },
+    ),
+  )
+  render(<EvaluationPage />)
+  const table = await screen.findByRole('table', { name: 'Layout runs' })
+  expect(table).toHaveTextContent('exp-c: full aug')
+  expect(table).toHaveTextContent('61.0%')
+  expect(table).toHaveTextContent('72.0%')
+  expect(table.querySelectorAll('tbody td')[4]).toHaveTextContent('—')
+})

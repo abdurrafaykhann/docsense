@@ -36,3 +36,11 @@ export const TONE_CLASS: Record<Tone, string> = {
   bad: 'border-rose-500 bg-rose-500/15 border-dashed',
   reviewed: 'border-sky-400 bg-sky-400/10',
 }
+
+export const REGION_COLOR: Record<string, string> = {
+  vendor: '#e11d48',
+  meta: '#2563eb',
+  table: '#16a34a',
+  totals: '#f59e0b',
+  other: '#9333ea',
+}

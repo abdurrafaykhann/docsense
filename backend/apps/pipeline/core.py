@@ -18,7 +18,8 @@ from apps.validation.schema import InvoiceExtraction
 
 from . import extract as extract_mod
 from .cleanup import clean_image
-from .grouping import pages_to_prompt_text
+from .grouping import pages_to_prompt_text, pages_to_region_prompt_text, regions_usable
+from .layout import LayoutDetector, Region
 
 StepHook = Callable[[str, str, str], None]  # (step, status, detail)
 TextBuilder = Callable[[dict[int, list[Word]], int], str]
@@ -40,6 +41,8 @@ class PipelineResult:
     cleaned: list[np.ndarray] = field(default_factory=list)
     prompt_text: str = ""
     cleanup_notes: list[float] = field(default_factory=list)
+    regions_by_page: dict[int, list[Region]] = field(default_factory=dict)
+    layout_used: bool = False
 
     @property
     def all_words(self) -> list[Word]:
@@ -62,6 +65,8 @@ def process(
     today: date | None = None,
     on_step: StepHook = _noop,
     words_by_page: dict[int, list[Word]] | None = None,
+    layout: LayoutDetector | None = None,
+    regions_by_page: dict[int, list[Region]] | None = None,
 ) -> PipelineResult:
     """Run cleanup -> OCR -> extract -> validate -> score.
 
@@ -87,8 +92,25 @@ def process(
     else:
         cleaned = images
 
+    # layout: detect regions on the cleaned page images (or accept supplied/oracle regions)
+    if regions_by_page is None and layout is not None:
+        on_step("layout", "running", "")
+        regions_by_page = {i + 1: layout.detect(img, page=i + 1) for i, img in enumerate(cleaned)}
+        found = sum(len(r) for r in regions_by_page.values())
+        usable = all(regions_usable(r) for r in regions_by_page.values())
+        on_step(
+            "layout", "done", f"{found} regions" + ("" if usable else " (fallback: whole page)")
+        )
+    elif regions_by_page is None:
+        on_step("layout", "skipped", "no layout model")
+    regions_by_page = regions_by_page or {}
+    layout_used = any(regions_usable(r) for r in regions_by_page.values())
+
     on_step("extract", "running", "")
-    text = text_builder(words_by_page, max_chars)
+    if layout_used and text_builder is whole_page_text:
+        text = pages_to_region_prompt_text(words_by_page, regions_by_page, max_chars)
+    else:
+        text = text_builder(words_by_page, max_chars)
     inv = extract_mod.extract(llm, text)
     on_step("extract", "done", "")
 
@@ -99,4 +121,16 @@ def process(
     overall = scoring.overall_confidence(scores)
     review = scoring.needs_review(scores, issues)
     on_step("validate", "done", f"{len(issues)} issue(s)")
-    return PipelineResult(inv, issues, scores, overall, review, words_by_page, cleaned, text, notes)
+    return PipelineResult(
+        inv,
+        issues,
+        scores,
+        overall,
+        review,
+        words_by_page,
+        cleaned,
+        text,
+        notes,
+        regions_by_page,
+        layout_used,
+    )

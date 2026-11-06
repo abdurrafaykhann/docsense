@@ -5,11 +5,12 @@ import {
   pageImageUrl,
   patchField,
   putLineItems,
+  putRegions,
   reprocess,
   reviewQueue,
   watchProgress,
 } from '../api/documents'
-import type { DocDetail, Extraction, LineItem } from '../api/documents'
+import type { DocDetail, Extraction, LayoutRegion, LineItem } from '../api/documents'
 import PageViewer from '../components/PageViewer'
 import StatusChip from '../components/StatusChip'
 import Stepper from '../components/Stepper'
@@ -27,6 +28,10 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [drawing, setDrawing] = useState(false)
+  const [showRegions, setShowRegions] = useState(false)
+  const [draft, setDraft] = useState<LayoutRegion[] | null>(null) // layout being edited
+  const [regionSel, setRegionSel] = useState<number | null>(null)
+  const [newCls, setNewCls] = useState<LayoutRegion['cls']>('table')
   const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(
@@ -101,9 +106,27 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
   }
 
   async function saveBox(bbox: BBox) {
+    if (draft) {
+      setDraft([...draft, { cls: newCls, bbox, score: 1, source: 'human' }])
+      setRegionSel(draft.length)
+      return
+    }
     if (!selected) return
     setDrawing(false)
     setExt(await patchField(workspaceId, id, selected, { bbox, page: 1 }))
+  }
+
+  async function saveLayout() {
+    if (!draft) return
+    await putRegions(
+      workspaceId,
+      id,
+      1,
+      draft.map((r) => ({ cls: r.cls, bbox: r.bbox })),
+    )
+    setDraft(null)
+    setRegionSel(null)
+    await load()
   }
 
   async function saveItems(items: LineItem[]) {
@@ -139,6 +162,27 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
           >
             Reprocess
           </button>
+          {(doc.pages[0]?.regions.length ?? 0) > 0 && (
+            <label className="flex items-center gap-1.5 rounded-lg border border-slate-700 px-3 py-1.5 text-sm">
+              <input
+                type="checkbox"
+                checked={showRegions}
+                onChange={(e) => setShowRegions(e.target.checked)}
+              />
+              Show layout
+            </label>
+          )}
+          {canEdit && doc.pages.length > 0 && !draft && (
+            <button
+              className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:bg-slate-800"
+              onClick={() => {
+                setDraft((doc.pages[0]?.regions ?? []).map((r) => ({ ...r })))
+                setRegionSel(null)
+              }}
+            >
+              Edit layout
+            </button>
+          )}
           {ext && canEdit && (
             <button
               className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium hover:bg-emerald-500"
@@ -151,6 +195,52 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
       </header>
 
       <Stepper steps={doc.progress} />
+      {draft && (
+        <div
+          className="flex flex-wrap items-center gap-2 rounded-xl border border-indigo-900 bg-indigo-950/40 p-3 text-sm"
+          aria-label="Layout editor"
+        >
+          <span>Drag on the page to add a region of class</span>
+          <select
+            aria-label="New region class"
+            value={newCls}
+            onChange={(e) => setNewCls(e.target.value as LayoutRegion['cls'])}
+            className="rounded border border-slate-700 bg-slate-950 px-2 py-1"
+          >
+            {['vendor', 'meta', 'table', 'totals', 'other'].map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+          <button
+            disabled={regionSel === null}
+            className="rounded border border-slate-700 px-2 py-1 disabled:opacity-40"
+            onClick={() => {
+              setDraft(draft.filter((_, k) => k !== regionSel))
+              setRegionSel(null)
+            }}
+          >
+            Delete selected
+          </button>
+          <button
+            className="rounded bg-indigo-500 px-3 py-1 font-medium"
+            onClick={() => void saveLayout()}
+          >
+            Save layout
+          </button>
+          <button
+            className="rounded border border-slate-700 px-2 py-1"
+            onClick={() => {
+              setDraft(null)
+              setRegionSel(null)
+            }}
+          >
+            Cancel
+          </button>
+          <span className="text-xs text-slate-400">
+            Saved layouts become training data when the document is approved.
+          </span>
+        </div>
+      )}
       {(doc.error || error) && (
         <p role="alert" className="text-sm text-rose-400">
           {doc.error || error}
@@ -162,8 +252,10 @@ export default function DocumentPage({ workspaceId, id }: { workspaceId: number;
           <PageViewer
             src={imageUrl}
             boxes={boxes}
+            regions={draft ?? (showRegions ? (doc.pages[0]?.regions ?? []) : undefined)}
+            regionEdit={draft ? { selected: regionSel, onSelect: setRegionSel } : undefined}
             onSelect={setSelected}
-            drawing={drawing}
+            drawing={drawing || draft !== null}
             onDraw={(b) => void saveBox(b)}
           />
 

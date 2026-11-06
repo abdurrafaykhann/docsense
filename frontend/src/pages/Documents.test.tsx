@@ -143,7 +143,7 @@ const REVIEW_DOC = {
       { status: 'done', detail: '' },
     ]),
   ),
-  pages: [{ number: 1, width: 100, height: 200 }],
+  pages: [{ number: 1, width: 100, height: 200, regions: [] as unknown[] }],
   extraction: {
     id: 1,
     version: 1,
@@ -219,4 +219,36 @@ test('review: boxes are toned by confidence, editing a field PATCHes it, approve
 
   await userEvent.click(screen.getByRole('button', { name: 'Approve' }))
   await waitFor(() => expect(location.hash).toBe('#/documents/12'))
+})
+
+test('layout regions can be toggled on the page viewer and show class + score', async () => {
+  vi.stubGlobal(
+    'URL',
+    Object.assign(URL, { createObjectURL: () => 'blob:x', revokeObjectURL: () => {} }),
+  )
+  const doc = {
+    ...REVIEW_DOC,
+    pages: [
+      {
+        number: 1,
+        width: 100,
+        height: 200,
+        regions: [
+          { cls: 'table', bbox: [0.05, 0.3, 0.95, 0.6], score: 0.91, source: 'model' },
+          { cls: 'totals', bbox: [0.5, 0.65, 0.95, 0.8], score: 0.77, source: 'model' },
+        ],
+      },
+    ],
+  }
+  vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) =>
+    String(input).endsWith('/image/') ? new Response('img') : json(doc),
+  )
+  render(<DocumentPage workspaceId={1} id={9} />)
+  const toggle = await screen.findByLabelText('Show layout')
+  expect(screen.queryByTestId('region-table')).toBeNull()
+  await userEvent.click(toggle)
+  expect(screen.getByTestId('region-table')).toHaveTextContent('table 91%')
+  expect(screen.getByTestId('region-totals')).toHaveTextContent('totals 77%')
+  await userEvent.click(toggle)
+  expect(screen.queryByTestId('region-table')).toBeNull()
 })

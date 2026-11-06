@@ -10,7 +10,7 @@ from django.utils import timezone
 
 log = logging.getLogger(__name__)
 
-STEPS = ["load", "cleanup", "ocr", "extract", "validate", "save"]
+STEPS = ["load", "cleanup", "ocr", "layout", "extract", "validate", "save"]
 
 
 def group_name(document_id: int) -> str:

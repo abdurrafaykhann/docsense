@@ -39,17 +39,20 @@ def test_rendered_boxes_words_and_fields_are_exact():
             ), tpl
 
 
-def test_build_writes_yolo_dataset_and_eval_set(tmp_path):
-    counts = build(tmp_path, n=12, seed=1, aug="full", aug_per_image=2)
-    assert counts["val"] == 2 and counts["train"] == 20  # i=0,10 are val; 10 train x 2 variants
-    imgs = sorted((tmp_path / "images" / "train").glob("*.jpg"))
-    labels = sorted((tmp_path / "labels" / "train").glob("*.txt"))
-    assert [p.stem for p in imgs] == [p.stem for p in labels]
-    for lab in labels:
-        for line in lab.read_text().splitlines():
-            c, *vals = line.split()
-            assert 0 <= int(c) <= 4 and all(0.0 <= float(v) <= 1.0 for v in vals)
-    assert "names:" in (tmp_path / "data.yaml").read_text()
-    samples = load_set(tmp_path / "eval")
-    assert len(samples) == 2 and samples[0].truth["total"] > 0
-    assert samples[0].load_image().ndim == 3
+def test_build_writes_yolo_datasets_per_level_and_eval_sets(tmp_path):
+    counts = build(tmp_path, n=12, seed=1)
+    # i=0 and i=10 are validation invoices; the other 10 train
+    assert counts["full/train"] == 10 and counts["full/val"] == 2 and counts["valfull"] == 2
+    for level in ("none", "basic", "full"):
+        imgs = sorted((tmp_path / level / "images" / "train").glob("*.jpg"))
+        labels = sorted((tmp_path / level / "labels" / "train").glob("*.txt"))
+        assert [p.stem for p in imgs] == [p.stem for p in labels] and len(imgs) == 10
+        for lab in labels:
+            for line in lab.read_text().splitlines():
+                c, *vals = line.split()
+                assert 0 <= int(c) <= 4 and all(0.0 <= float(v) <= 1.0 for v in vals)
+        assert "names:" in (tmp_path / level / "data.yaml").read_text()
+    clean = load_set(tmp_path / "eval")
+    assert len(clean) == 2 and clean[0].truth["total"] > 0 and clean[0].words
+    assert clean[0].load_image().ndim == 3
+    assert load_set(tmp_path / "evalfull")[0].words is None

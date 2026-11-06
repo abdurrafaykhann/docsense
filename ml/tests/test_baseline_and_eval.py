@@ -120,3 +120,64 @@ def test_caches_and_pacing(tmp_path):
     now[0] = 1.0
     r.invoke([])
     assert naps == [1.5]
+
+
+DECOY = TEXT + "\nThank you! Total savings this year 99,999.00\nCall 0300-1234567"
+
+
+def test_region_labels_stop_footer_decoys_from_hijacking_fields():
+    whole = extract_text(DECOY)
+    assert whole["total"] == 99999  # last 'total' line wins: wrong without regions
+    sectioned = (
+        "[VENDOR]\nACME TRADERS\nNTN 1234567-8 STRN 1234567890123\n"
+        "[META]\nInvoice No INV-0042\nDate 12/03/2024\n"
+        "[TABLE]\nWidget 2 500.00 1000.00\nGadget 1 2000.00 2000.00\n"
+        "[TOTALS]\nSubtotal 3,000.00\nSales Tax 18% 540.00\nTotal 3,540.00\n"
+        "[OTHER]\nThank you! Total savings this year 99,999.00\nCall 0300-1234567"
+    )
+    r = extract_text(sectioned)
+    assert (r["total"], r["subtotal"], r["sales_tax"], r["tax_rate"]) == (3540, 3000, 540, 18)
+    assert r["vendor_name"] == "ACME TRADERS" and r["invoice_date"] == "2024-03-12"
+    assert [i["amount"] for i in r["line_items"]] == [1000, 2000]
+
+
+def test_oracle_layout_arm_beats_whole_page_on_decoy_receipts(tmp_path):
+    from apps.pipeline.layout import FakeLayout, Region
+
+    lines = DECOY.splitlines()
+    n = len(lines)
+
+    def band(a, b):
+        return [0.0, a / (n + 1), 1.0, (b + 1) / (n + 1)]
+
+    regions = [
+        {"cls": "vendor", "bbox": band(0, 1)},
+        {"cls": "meta", "bbox": band(2, 3)},
+        {"cls": "table", "bbox": band(4, 5)},
+        {"cls": "totals", "bbox": band(6, 8)},
+        {"cls": "other", "bbox": band(9, 10)},
+    ]
+    (tmp_path / "images").mkdir()
+    Image.new("RGB", (80, 100), "white").save(tmp_path / "images" / "0.png")
+    write_manifest(
+        tmp_path,
+        [
+            {
+                "id": "d0",
+                "image": "images/0.png",
+                "truth": {"total": 3540, "vendor_name": "ACME TRADERS"},
+                "words": [w.as_dict() for w in words_from_lines(lines)],
+                "meta": {"regions": regions},
+            }
+        ],
+    )
+    samples = load_set(tmp_path)
+
+    def run(**kw):
+        llm = LLMClient([Provider("regex", RegexModel())], cache=MemoryCache())
+        return evaluate(samples, ocr=FakeOCR(), llm=llm, oracle_ocr=True, **kw)["metrics"]
+
+    assert run()["total_exact_match"] == 0.0  # arm A: whole page, decoy wins
+    assert run(oracle_layout=True)["total_exact_match"] == 1.0  # arm C: oracle regions
+    layout = FakeLayout([Region(r["cls"], r["bbox"]) for r in regions])
+    assert run(layout=layout)["total_exact_match"] == 1.0  # arm B: a layout detector

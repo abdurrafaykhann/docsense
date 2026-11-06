@@ -8,7 +8,7 @@ export interface Membership {
 }
 
 export interface Me {
-  user: { id: number; email: string; name: string }
+  user: { id: number; email: string; name: string; is_staff: boolean }
   workspaces: Membership[]
 }
 

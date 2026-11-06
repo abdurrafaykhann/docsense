@@ -14,6 +14,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from apps.pipeline import core
+from apps.pipeline.layout import Region
 from apps.validation.grounding import Word
 
 from . import metrics
@@ -28,6 +29,8 @@ def evaluate(
     default_tax_rate: float = 18.0,
     oracle_ocr: bool = False,
     text_builder=core.whole_page_text,
+    layout=None,
+    oracle_layout: bool = False,
     on_progress=None,
 ) -> dict:
     docs = []
@@ -47,6 +50,9 @@ def evaluate(
             wbp = None
             if oracle_ocr and s.words:
                 wbp = {1: [Word.from_dict(w) for w in s.words]}
+            regions = None
+            if oracle_layout and s.meta.get("regions"):  # arm C: ground-truth regions
+                regions = {1: [Region(r["cls"], r["bbox"], 1.0, 1) for r in s.meta["regions"]]}
             res = core.process(
                 [img],
                 ocr,
@@ -54,6 +60,8 @@ def evaluate(
                 words_by_page=wbp,
                 default_tax_rate=default_tax_rate,
                 text_builder=text_builder,
+                layout=layout,
+                regions_by_page=regions,
             )
             pred = res.invoice.model_dump(mode="json")
             entry.update(
@@ -101,6 +109,11 @@ def main(argv=None) -> int:
     ap.add_argument("--limit", type=int)
     ap.add_argument("--idr", action="store_true", help="IDR amounts + 10%% default tax (CORD)")
     ap.add_argument("--oracle-ocr", action="store_true", help="use the set's own word boxes")
+    ap.add_argument(
+        "--layout",
+        default="none",
+        help="none | oracle (ground-truth regions) | path/to/weights.pt (my YOLO)",
+    )
     ap.add_argument("--cache-dir", default="ml/.cache")
     ap.add_argument("--min-interval", type=float, default=2.5, help="seconds between LLM calls")
     ap.add_argument("--out", help="results JSON (default docs/eval-results/<set>-<arm>.json)")
@@ -127,18 +140,26 @@ def main(argv=None) -> int:
     def progress(i, n, e):
         print(f"[{i}/{n}] {e['id']} review={e['needs_review']} {e['seconds']}s", flush=True)
 
+    layout = None
+    if args.layout not in ("none", "oracle"):
+        from apps.pipeline.layout import YoloLayoutDetector
+
+        layout = YoloLayoutDetector(args.layout)
     result = evaluate(
         samples,
         ocr=ocr,
         llm=llm,
         default_tax_rate=10.0 if args.idr else 18.0,
         oracle_ocr=args.oracle_ocr,
+        layout=layout,
+        oracle_layout=args.layout == "oracle",
         on_progress=progress,
     )
     payload = {
         "kind": "extraction",
         "dataset": name,
-        "arm": args.arm if args.arm == "regex" else f"llm:{args.provider}",
+        "arm": (args.arm if args.arm == "regex" else f"llm:{args.provider}")
+        + {"none": "", "oracle": " + oracle layout"}.get(args.layout, " + my layout model"),
         "n": len(samples),
         "ocr": "oracle" if args.oracle_ocr else "doctr",
         "git_sha": git_sha(),
@@ -146,7 +167,8 @@ def main(argv=None) -> int:
         "ocr_cache": {"hits": ocr.hits, "misses": ocr.misses},
         **result,
     }
-    out = Path(args.out or f"docs/eval-results/{name}-{args.arm}.json")
+    suffix = {"none": "", "oracle": "-oracle-layout"}.get(args.layout, "-layout-model")
+    out = Path(args.out or f"docs/eval-results/{name}-{args.arm}{suffix}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, indent=1, ensure_ascii=False), encoding="utf-8")
     m = result["metrics"]

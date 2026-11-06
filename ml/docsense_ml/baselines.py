@@ -77,52 +77,92 @@ def _date(text: str) -> str | None:
     return None
 
 
+SECTION_RE = re.compile(r"^\[(VENDOR|META|TABLE|TOTALS|OTHER)\]$")
+
+
+def parse_sections(text: str) -> dict[str, list[str]] | None:
+    """Split region-labelled prompt text into {section: lines}; None if there are no markers."""
+    sections: dict[str, list[str]] = {}
+    current = None
+    for ln in (x.strip() for x in text.splitlines()):
+        if not ln or ln.startswith("---"):
+            continue
+        m = SECTION_RE.match(ln)
+        if m:
+            current = m.group(1).lower()
+            sections.setdefault(current, [])
+        elif current:
+            sections[current].append(ln)
+    return sections or None
+
+
 def extract_text(text: str, idr: bool = False) -> dict:
-    lines = [ln.strip() for ln in text.splitlines() if ln.strip() and not ln.startswith("---")]
+    """Heuristic extraction. With region markers, each field is searched only where it belongs."""
+    sections = parse_sections(text)
+    all_lines = [
+        ln.strip()
+        for ln in text.splitlines()
+        if ln.strip() and not ln.startswith("---") and not SECTION_RE.match(ln.strip())
+    ]
+    if sections:
+        vendor_l = sections.get("vendor") or all_lines
+        meta_l = (sections.get("meta") or []) + (sections.get("vendor") or []) or all_lines
+        totals_l = sections.get("totals") or all_lines
+        table_l = sections.get("table") or all_lines
+        id_l = vendor_l + (sections.get("meta") or [])
+    else:
+        vendor_l = meta_l = totals_l = table_l = id_l = all_lines
+    lines = all_lines
+
     out: dict = {"line_items": []}
-    for ln in lines:
+    for ln in vendor_l:
         if re.search(r"[A-Za-z]{3,}", ln) and not re.search(r"\d{4,}", ln):
             out["vendor_name"] = ln.split("|")[0].strip()
             break
-    joined = "\n".join(lines)
-    out["invoice_date"] = _date(joined)
-    if m := re.search(r"\bNTN\b[^0-9]*([0-9][0-9\- ]{5,14}[0-9])", joined, re.I):
+    meta_text = "\n".join(meta_l)
+    id_text = "\n".join(id_l)
+    out["invoice_date"] = _date(meta_text) or _date("\n".join(lines))
+    if m := re.search(r"\bNTN\b[^0-9]*([0-9][0-9\- ]{5,14}[0-9])", id_text, re.I):
         out["ntn"] = m.group(1).strip()
     if m := re.search(
-        r"\b(?:STRN|GST|S\.?T\.?R\.?N\.?)\b[^0-9]*([0-9][0-9\- ]{11,22}[0-9])", joined, re.I
+        r"\b(?:STRN|GST|S\.?T\.?R\.?N\.?)\b[^0-9]*([0-9][0-9\- ]{11,22}[0-9])", id_text, re.I
     ):
         out["strn"] = m.group(1).strip()
     if m := re.search(
         r"\b(?:invoice|inv|bill|receipt)\s*(?:no|number|#)?[.:#\s]*([A-Z0-9][A-Z0-9\-/]{2,})",
-        joined,
+        meta_text,
         re.I,
     ):
         out["invoice_number"] = m.group(1)
 
-    def last_amount(pattern: str, exclude: str | None = None) -> float | None:
+    def last_amount(src: list[str], pattern: str, exclude: str | None = None) -> float | None:
         found = None
-        for ln in lines:
+        for ln in src:
             if re.search(pattern, ln, re.I) and not (exclude and re.search(exclude, ln, re.I)):
                 a = _amounts(ln, idr)
                 if a:
                     found = a[-1]
         return found
 
-    out["total"] = last_amount(r"\btotal\b|\bjumlah\b|\bamount due\b", r"sub\s*-?\s*total")
-    out["subtotal"] = last_amount(r"sub\s*-?\s*total")
-    out["sales_tax"] = last_amount(r"\b(tax|ppn|gst|vat|pb1|st)\b")
-    if m := re.search(r"(\d+(?:\.\d+)?)\s*%", joined):
+    out["total"] = last_amount(
+        totals_l, r"\btotal\b|\bjumlah\b|\bamount due\b", r"sub\s*-?\s*total"
+    )
+    out["subtotal"] = last_amount(totals_l, r"sub\s*-?\s*total")
+    out["sales_tax"] = last_amount(totals_l, r"\b(tax|ppn|gst|vat|pb1|st)\b")
+    if m := re.search(r"(\d+(?:\.\d+)?)\s*%", "\n".join(totals_l)):
         out["tax_rate"] = float(m.group(1))
     if out["total"] is None:
-        all_amounts = [a for ln in lines for a in _amounts(ln, idr)]
-        out["total"] = max(all_amounts) if all_amounts else None
+        pool = totals_l if sections and sections.get("totals") else all_lines
+        amounts = [a for ln in pool for a in _amounts(ln, idr)]
+        out["total"] = max(amounts) if amounts else None
 
     skip = re.compile(
         r"total|tax|ppn|gst|cash|change|tunai|kembali|discount|service|date|tel|npwp"
-        r"|ntn|strn|invoice|inv|bill|receipt|ref|no",
+        r"|ntn|strn|invoice|\binv\b|bill|receipt|ref\b|\bno\b",
         re.I,
     )
-    for ln in lines[1:]:
+    start = 0 if sections and sections.get("table") else 1
+    for ln in table_l[start:]:
         if skip.search(ln):
             continue
         a = _amounts(ln, idr)
