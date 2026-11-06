@@ -18,10 +18,12 @@ ml/data/*/images/
 ml/runs/
 ml/data/
 ml/runs/
-ml/runs_train.log
+ml/runs_train*.log
 mlflow.db
 mlruns/
 backend/demo.sqlite3
 backend/demo_media/
 ml/models/*
 !ml/models/layout-current.pt
+/yolo11n.pt
+/*.pt
