@@ -36,3 +36,19 @@ def world(db):
     Membership.objects.create(user=users["outsider"], workspace=other, role=Role.OWNER)
     key, raw = ApiKey.issue(ws, "ci", created_by=users["owner"])
     return {"ws": ws, "other": other, "users": users, "key": key, "raw_key": raw}
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _postgres_flush_cascades():
+    """`rag_chunk_vec` (pgvector mirror) is created by a raw-SQL migration with a FK to
+    rag_chunk, so Django's flush cannot see it and refuses a plain TRUNCATE on Postgres."""
+    from django.db.backends.postgresql.operations import DatabaseOperations
+
+    original = DatabaseOperations.sql_flush
+
+    def sql_flush(self, style, tables, *, reset_sequences=False, allow_cascade=False):
+        return original(self, style, tables, reset_sequences=reset_sequences, allow_cascade=True)
+
+    DatabaseOperations.sql_flush = sql_flush
+    yield
+    DatabaseOperations.sql_flush = original
