@@ -1,4 +1,4 @@
-"""Real docTR smoke test (downloads weights on first run). Run: pytest -m slow --force-enable-socket"""
+"""Real docTR smoke test. Run: pytest -m slow --force-enable-socket (downloads weights)."""
 
 import numpy as np
 import pytest
