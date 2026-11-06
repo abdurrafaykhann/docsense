@@ -36,6 +36,7 @@ class UsageRecord:
     status: str  # ok | rate_limited | error | cache_hit
     latency_s: float = 0.0
     attempt: int = 1
+    prompt_chars: int = 0
 
 
 @dataclass
@@ -47,12 +48,16 @@ class LLMClient:
     sleep: Callable[[float], None] = time.sleep
     on_usage: Callable[[UsageRecord], None] | None = None
 
+    _chars: int = 0
+
     def _record(self, rec: UsageRecord) -> None:
+        rec.prompt_chars = self._chars
         if self.on_usage:
             self.on_usage(rec)
 
     def structured(self, schema: type[T], messages: Messages, *, cache_extra: str = "") -> T:
         key = make_key(schema_name=schema.__name__, messages=messages, model_tag=cache_extra)
+        self._chars = sum(len(c) for _, c in messages)
         hit = self.cache.get(key)
         if hit is not None:
             self._record(UsageRecord("cache", schema.__name__, "cache_hit"))
@@ -106,7 +111,7 @@ def build_default_client(settings=None) -> LLMClient:
     if settings.LLM_PROVIDER == "fake":
         from .fake import FakeChatModel
 
-        return LLMClient([Provider("fake", FakeChatModel())])
+        return LLMClient([Provider("fake", FakeChatModel())], on_usage=db_usage_logger)
 
     from langchain.chat_models import init_chat_model
 
@@ -120,6 +125,33 @@ def build_default_client(settings=None) -> LLMClient:
         )
         for c in order
     ]
+    from .cache import DbCache
+
     return LLMClient(
-        providers, max_retries=settings.LLM_MAX_RETRIES, max_wait=settings.LLM_MAX_WAIT_SECONDS
+        providers,
+        cache=DbCache(),
+        max_retries=settings.LLM_MAX_RETRIES,
+        max_wait=settings.LLM_MAX_WAIT_SECONDS,
+        on_usage=db_usage_logger,
     )
+
+
+def db_usage_logger(rec: UsageRecord) -> None:
+    """Persist one LLMUsage row per attempt (best effort: never break extraction)."""
+    from . import context
+    from .models import LLMUsage
+
+    try:
+        ctx = context.current()
+        LLMUsage.objects.create(
+            provider=rec.provider,
+            schema=rec.schema,
+            status=rec.status,
+            latency_s=rec.latency_s,
+            attempt=rec.attempt,
+            prompt_chars=rec.prompt_chars,
+            workspace_id=ctx.get("workspace_id"),
+            document_id=ctx.get("document_id"),
+        )
+    except Exception:  # noqa: BLE001
+        log.exception("could not record LLM usage")

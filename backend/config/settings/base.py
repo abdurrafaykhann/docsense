@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     "apps.accounts",
     "apps.workspaces",
     "apps.llm",
+    "apps.documents",
+    "apps.pipeline",
 ]
 
 MIDDLEWARE = [
@@ -137,3 +139,14 @@ if env("CACHE_REDIS", "0") == "1":
             "LOCATION": REDIS_URL,
         }
     }
+
+# --- Documents / pipeline ---------------------------------------------------
+OCR_ENGINE = env("OCR_ENGINE", "doctr")  # doctr | fake
+ALLOWED_UPLOAD_TYPES = {
+    "application/pdf": "pdf",
+    "image/png": "png",
+    "image/jpeg": "jpg",
+    "image/webp": "webp",
+}
+MAX_PAGES_PER_DOC = int(env("MAX_PAGES_PER_DOC", "6"))
+LLM_MAX_PROMPT_CHARS = int(env("LLM_MAX_PROMPT_CHARS", "12000"))

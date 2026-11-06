@@ -35,7 +35,7 @@ test('anonymous user sees the login form and a failed login shows the error', as
   expect(await screen.findByRole('alert')).toHaveTextContent('No active account')
 })
 
-test('login stores tokens and shows the settings page with members and keys', async () => {
+test('login stores tokens, shows documents, and settings has members and keys', async () => {
   vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
     const url = String(input)
     if (url.endsWith('/auth/login/')) return json({ access: 'A', refresh: 'R' })
@@ -49,14 +49,17 @@ test('login stores tokens and shows the settings page with members and keys', as
     if (url.endsWith('/members/'))
       return json([{ id: 1, user_id: 1, email: 'a@example.com', name: 'A', role: 'owner' }])
     if (url.endsWith('/api-keys/')) return json([])
+    if (url.endsWith('/documents/')) return json([])
     return json({}, 404)
   })
   renderApp()
   await userEvent.type(screen.getByPlaceholderText('Email'), 'a@example.com')
   await userEvent.type(screen.getByPlaceholderText('Password'), 'pw')
   await userEvent.click(screen.getByRole('button', { name: 'Log in' }))
-  expect(await screen.findByText(/Uploads: 2 \/ 50/)).toBeInTheDocument()
+  expect(await screen.findByText('No documents yet.')).toBeInTheDocument()
   expect(tokens.access).toBe('A')
+  location.hash = '#/settings'
+  expect(await screen.findByText(/Uploads: 2 \/ 50/)).toBeInTheDocument()
   expect(screen.getByRole('region', { name: 'API keys' })).toBeInTheDocument()
 })
 

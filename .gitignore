@@ -11,3 +11,4 @@ staticfiles/
 .ruff_cache/
 mlruns/
 ml/models/*.pt
+test_media/
