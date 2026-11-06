@@ -21,6 +21,8 @@ export interface FieldRow {
   flags: string[]
   page: number | null
   bbox: [number, number, number, number] | null
+  reviewed: boolean
+  box_edited: boolean
 }
 
 export interface Issue {
@@ -53,7 +55,15 @@ export interface StepState {
   detail: string
 }
 
+export interface AuditRow {
+  action: string
+  detail: Record<string, unknown>
+  user: string
+  at: string
+}
+
 export interface DocDetail extends DocSummary {
+  audit: AuditRow[]
   progress: Record<string, StepState>
   pages: { number: number; width: number; height: number }[]
   extraction: Extraction | null
@@ -111,3 +121,23 @@ export function watchProgress(
   ws.onmessage = (m) => onEvent(JSON.parse(m.data))
   return () => ws.close()
 }
+
+const base = (ws: number, id: number) => `/workspaces/${ws}/documents/${id}`
+
+export const patchField = (
+  ws: number,
+  id: number,
+  name: string,
+  body: { value?: string; bbox?: number[]; page?: number },
+) => api<Extraction>(`${base(ws, id)}/fields/${name}/`, { method: 'PATCH', json: body })
+
+export const putLineItems = (ws: number, id: number, line_items: LineItem[]) =>
+  api<Extraction>(`${base(ws, id)}/line-items/`, { method: 'PUT', json: { line_items } })
+
+export const approveDocument = (ws: number, id: number) =>
+  api<DocSummary>(`${base(ws, id)}/approve/`, { method: 'POST' })
+
+export const reviewQueue = (ws: number) =>
+  api<{ count: number; documents: (DocSummary & { confidence: number })[] }>(
+    `/workspaces/${ws}/review/queue/`,
+  )

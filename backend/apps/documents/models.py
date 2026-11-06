@@ -74,6 +74,60 @@ class FieldValue(models.Model):
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL
     )
     reviewed_at = models.DateTimeField(null=True, blank=True)
+    box_edited = models.BooleanField(default=False)
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["extraction", "name"], name="uniq_field")]
+
+
+class AuditEvent(models.Model):
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="audit")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    action = models.CharField(max_length=40)  # field_edited | box_edited | approved
+    detail = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+
+
+class Vendor(models.Model):
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name="vendors")
+    name = models.CharField(max_length=200)
+    ntn = models.CharField(max_length=30, blank=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["workspace", "name"], name="uniq_vendor")]
+
+
+class Invoice(models.Model):
+    """Approved, query-friendly record (what analytics and the spending agent read)."""
+
+    document = models.OneToOneField(Document, on_delete=models.CASCADE, related_name="invoice")
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name="invoices")
+    vendor = models.ForeignKey(
+        Vendor, null=True, on_delete=models.SET_NULL, related_name="invoices"
+    )
+    ntn = models.CharField(max_length=30, blank=True)
+    strn = models.CharField(max_length=30, blank=True)
+    invoice_number = models.CharField(max_length=80, blank=True)
+    invoice_date = models.DateField(null=True, blank=True)
+    currency = models.CharField(max_length=3, default="PKR")
+    subtotal = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    tax_rate = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    sales_tax = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    total = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    category = models.CharField(max_length=60, blank=True)
+    approved_at = models.DateTimeField(auto_now=True)
+
+
+class InvoiceLineItem(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name="items")
+    position = models.PositiveSmallIntegerField(default=0)
+    description = models.CharField(max_length=300, blank=True)
+    quantity = models.DecimalField(max_digits=12, decimal_places=3, null=True, blank=True)
+    unit_price = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    amount = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+
+    class Meta:
+        ordering = ["position"]

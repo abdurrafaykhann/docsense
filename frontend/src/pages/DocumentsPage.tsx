@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { listDocuments, uploadFiles } from '../api/documents'
+import { listDocuments, reviewQueue, uploadFiles } from '../api/documents'
 import type { DocSummary } from '../api/documents'
 import StatusChip from '../components/StatusChip'
 
@@ -7,9 +7,14 @@ export default function DocumentsPage({ workspaceId }: { workspaceId: number }) 
   const [docs, setDocs] = useState<DocSummary[]>([])
   const [message, setMessage] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [queue, setQueue] = useState<{ count: number; first?: number }>({ count: 0 })
   const input = useRef<HTMLInputElement>(null)
 
-  const refresh = useCallback(async () => setDocs(await listDocuments(workspaceId)), [workspaceId])
+  const refresh = useCallback(async () => {
+    setDocs(await listDocuments(workspaceId))
+    const q = await reviewQueue(workspaceId)
+    setQueue({ count: q.count, first: q.documents[0]?.id })
+  }, [workspaceId])
 
   useEffect(() => {
     void refresh()
@@ -65,6 +70,15 @@ export default function DocumentsPage({ workspaceId }: { workspaceId: number }) 
           onChange={(e) => void onFiles(e.target.files)}
         />
       </label>
+      {queue.count > 0 && (
+        <a
+          href={`#/documents/${queue.first}`}
+          className="rounded-xl border border-orange-900 bg-orange-950/40 p-3 text-sm text-orange-200"
+        >
+          {queue.count} document{queue.count > 1 ? 's' : ''} need review — review the least
+          confident first →
+        </a>
+      )}
       {message && (
         <p role="alert" className="text-sm text-rose-400">
           {message}

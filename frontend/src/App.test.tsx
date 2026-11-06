@@ -50,6 +50,7 @@ test('login stores tokens, shows documents, and settings has members and keys', 
       return json([{ id: 1, user_id: 1, email: 'a@example.com', name: 'A', role: 'owner' }])
     if (url.endsWith('/api-keys/')) return json([])
     if (url.endsWith('/documents/')) return json([])
+    if (url.endsWith('/review/queue/')) return json({ count: 0, documents: [] })
     return json({}, 404)
   })
   renderApp()
