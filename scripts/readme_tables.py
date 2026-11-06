@@ -17,6 +17,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 START, END = "<!-- results:start -->", "<!-- results:end -->"
 CLASSES = ["vendor", "meta", "table", "totals", "other"]
+PIPE = chr(124)
+
+
+def cell(text) -> str:
+    """Markdown-safe table cell (a pipe inside a name would split the column)."""
+    return str(text).replace(PIPE, chr(92) + PIPE)
 
 
 def pct(v, digits: int = 1) -> str:
@@ -38,7 +44,9 @@ def layout_table(runs: list[dict]) -> str:
         if r.get("kind") != "layout":
             continue
         exp = r["arm"].split(":")[0]
-        by_exp.setdefault(exp, {"desc": r["arm"].split(": ", 1)[-1]})[r["dataset"]] = r["metrics"]
+        by_exp.setdefault(exp, {"desc": r["arm"].split(": ", 1)[-1]})[r["dataset"]] = r[
+            "metrics"
+        ]
     if not by_exp:
         return "_No layout runs yet._"
     rows = [
@@ -50,7 +58,7 @@ def layout_table(runs: list[dict]) -> str:
         syn, real = e.get("synthetic-hard", {}), e.get("cord-real-test", {})
         rp = real.get("per_class_ap50", {})
         rows.append(
-            f"| **{exp}**: {e['desc']} | {pct(syn.get('map50'))} | **{pct(real.get('map50'))}** | "
+            f"| **{exp}**: {cell(e['desc'])} | {pct(syn.get('map50'))} | **{pct(real.get('map50'))}** | "
             f"{pct(rp.get('table'))} | {pct(rp.get('totals'))} |"
         )
     detail = [
@@ -62,7 +70,9 @@ def layout_table(runs: list[dict]) -> str:
     ]
     for exp in sorted(by_exp):
         pc = by_exp[exp].get("synthetic-hard", {}).get("per_class_ap50", {})
-        detail.append(f"| {exp} | " + " | ".join(pct(pc.get(c)) for c in CLASSES) + " |")
+        detail.append(
+            f"| {exp} | " + " | ".join(pct(pc.get(c)) for c in CLASSES) + " |"
+        )
     return "\n".join(rows + detail)
 
 
@@ -78,14 +88,22 @@ def extraction_table(runs: list[dict]) -> str:
         m = r["metrics"]
         li = (m.get("line_items") or {}).get("f1")
         out.append(
-            f"| {r['dataset']} | {r['arm']} | {r['n']} | {pct(m['micro']['f1'])} | "
+            f"| {cell(r['dataset'])} | {cell(r['arm'])} | {r['n']} | {pct(m['micro']['f1'])} | "
             f"{pct(m.get('total_exact_match'))} | {pct(li)} |"
         )
     pf = next((r for r in rows if r["dataset"].startswith("cord")), None)
     if pf and pf["metrics"].get("per_field"):
-        out += ["", "Per-field (CORD, " + pf["arm"] + "):", "", "| Field | Precision | Recall | F1 | Support |", "|---|---|---|---|---|"]
+        out += [
+            "",
+            "Per-field (CORD, " + cell(pf["arm"]) + "):",
+            "",
+            "| Field | Precision | Recall | F1 | Support |",
+            "|---|---|---|---|---|",
+        ]
         for name, f in pf["metrics"]["per_field"].items():
-            out.append(f"| {name} | {pct(f['precision'])} | {pct(f['recall'])} | {pct(f['f1'])} | {f['support']} |")
+            out.append(
+                f"| {name} | {pct(f['precision'])} | {pct(f['recall'])} | {pct(f['f1'])} | {f['support']} |"
+            )
     return "\n".join(out)
 
 
@@ -94,16 +112,19 @@ def rag_table(runs: list[dict]) -> str:
     if not rows:
         return "_No RAG runs yet._"
     out = [
-        "| Setup | Questions | Hit@5 | MRR | Unanswerable rejected by retrieval gate | Judge (1-5) | Citation accuracy | Abstention accuracy |",
+        "| Setup | Questions | Hit@5 | MRR | Unanswerable rejected by retrieval gate | Judge (1-5) | "
+        "Citation accuracy | Abstention accuracy |",
         "|---|---|---|---|---|---|---|---|",
     ]
     for r in rows:
         m = r["metrics"]
         a = m.get("answers") or {}
         out.append(
-            f"| {r['arm']} | {r['n']} | {pct(m.get('hit_at_5'))} | {m.get('mrr', 'n/a')} | "
-            f"{pct(m.get('unanswerable_rejected_by_gate'))} | {a.get('judge_score_mean_1_5', 'pending (needs API keys)')} | "
-            f"{pct(a.get('citation_accuracy')) if a else 'pending'} | {pct(a.get('abstention_accuracy')) if a else 'pending'} |"
+            f"| {cell(r['arm'])} | {r['n']} | {pct(m.get('hit_at_5'))} | {m.get('mrr', 'n/a')} | "
+            f"{pct(m.get('unanswerable_rejected_by_gate'))} | "
+            f"{a.get('judge_score_mean_1_5', 'pending (needs API keys)')} | "
+            f"{pct(a.get('citation_accuracy')) if a else 'pending'} | "
+            f"{pct(a.get('abstention_accuracy')) if a else 'pending'} |"
         )
     return "\n".join(out)
 
@@ -135,7 +156,9 @@ def render(results_dir: Path) -> str:
 def splice(readme: str, block: str) -> str:
     if START not in readme or END not in readme:
         raise SystemExit(f"README.md needs the markers {START} ... {END}")
-    return re.sub(re.escape(START) + r".*?" + re.escape(END), lambda _m: block, readme, flags=re.S)
+    return re.sub(
+        re.escape(START) + r".*?" + re.escape(END), lambda _m: block, readme, flags=re.S
+    )
 
 
 def main() -> int:

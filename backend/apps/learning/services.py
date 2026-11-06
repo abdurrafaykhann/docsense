@@ -122,8 +122,17 @@ def subprocess_runner(args: dict) -> dict:
         "--epochs", str(args["epochs"]), "--imgsz", str(args.get("imgsz", 416)),
         "--synth", str(root / "data" / "synth"), "--real", str(root / "data" / "cord_layout"),
     ]  # fmt: skip
-    env = {**os.environ, "PYTHONPATH": str(root)}
-    proc = subprocess.run(cmd, capture_output=True, text=True, env=env, cwd=root.parent)
+    env = {**os.environ, "PYTHONPATH": str(root), "PYTHONIOENCODING": "utf-8"}
+    # explicit utf-8: the trainer prints box-drawing characters that Windows cp1252 cannot decode
+    proc = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        env=env,
+        cwd=root.parent,
+    )
     if proc.returncode != 0:
         raise RuntimeError(proc.stderr[-1500:] or proc.stdout[-1500:])
     last = [ln for ln in proc.stdout.splitlines() if ln.startswith("RESULT ")]

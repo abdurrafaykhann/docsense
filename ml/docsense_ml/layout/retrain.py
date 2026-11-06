@@ -22,7 +22,9 @@ from . import yolo
 FEEDBACK_COPIES = 3  # human-confirmed samples are scarce: oversample them next to synthetic data
 HOLDOUT_EVERY = 5  # every 5th feedback sample is held out to measure learning on real usage
 MIN_HOLDOUT = 10
-FINE_TUNE = {"lr0": 0.002, "warmup_epochs": 0.0}
+# Gentle fine-tuning: an explicit optimizer (Ultralytics' "auto" ignores lr0 and picks a hot rate
+# for short runs, which wrecked the model in the first end-to-end test) and a small learning rate.
+FINE_TUNE = {"optimizer": "AdamW", "lr0": 0.0003, "lrf": 0.1, "warmup_epochs": 0.0}
 
 
 def _yaml(path: Path, root: Path, train, val) -> Path:
@@ -70,12 +72,21 @@ def run(feedback: Path, base: Path, out: Path, synth: Path, real: Path, epochs: 
     work.mkdir(parents=True, exist_ok=True)
     fb_train, fb_hold = split_feedback(Path(feedback), work)
     synth_full = Path(synth) / "full"
-    train_yaml = _yaml(
-        work / "train.yaml",
-        work,
-        [synth_full / "images" / "train", fb_train],
-        synth_full / "images" / "val",
-    )
+    # Replay: a model fine-tuned only on new feedback forgets what it learned from its original
+    # ingredients (the first end-to-end retrain dropped real mAP from 0.71 to 0.02). Keep every
+    # ingredient the base model was trained on that exists on this machine.
+    # Same synthetic ingredient as the base model (scene placement when available, otherwise full
+    # augmentation): mixing in a second, full-frame synthetic set diluted the real receipts and
+    # pulled the model back toward full-frame pages (second end-to-end retrain: real 0.71 -> 0.45).
+    scene = Path(synth) / "scene" / "images" / "train"
+    train_dirs = [scene if scene.exists() else synth_full / "images" / "train", fb_train]
+    if (Path(real) / "images" / "tune").exists():
+        from .experiments import pseudo_label_mix
+
+        mix = work / "real_replay"
+        pseudo_label_mix(base, Path(real), mix, imgsz)
+        train_dirs.append(mix / "images" / "train")
+    train_yaml = _yaml(work / "train.yaml", work, train_dirs, synth_full / "images" / "val")
 
     eval_sets: dict[str, Path] = {}
     if (Path(synth) / "valfull" / "data.yaml").exists():

@@ -136,13 +136,18 @@ def extract_text(text: str, idr: bool = False) -> dict:
         out["invoice_number"] = m.group(1)
 
     def last_amount(src: list[str], pattern: str, exclude: str | None = None) -> float | None:
-        found = None
-        for ln in src:
-            if re.search(pattern, ln, re.I) and not (exclude and re.search(exclude, ln, re.I)):
-                a = _amounts(ln, idr)
-                if a:
-                    found = a[-1]
-        return found
+        """Regions are a *prior*, not a hard wall: if the field is not in its region (a predicted
+        box can cut off a line), fall back to the whole page."""
+        for pool in (src, all_lines) if src is not all_lines else (src,):
+            found = None
+            for ln in pool:
+                if re.search(pattern, ln, re.I) and not (exclude and re.search(exclude, ln, re.I)):
+                    a = _amounts(ln, idr)
+                    if a:
+                        found = a[-1]
+            if found is not None:
+                return found
+        return None
 
     out["total"] = last_amount(
         totals_l, r"\btotal\b|\bjumlah\b|\bamount due\b", r"sub\s*-?\s*total"

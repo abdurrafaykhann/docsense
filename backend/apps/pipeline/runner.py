@@ -31,17 +31,28 @@ def _fmt(name: str, value) -> str:
 _UNSET = object()
 
 
+def _friendly(exc: Exception) -> str:
+    text = str(exc)
+    if "api_key" in text.lower() or "api key" in text.lower():
+        return (
+            "the LLM is not configured. Set GROQ_API_KEY and/or GOOGLE_API_KEY (free tiers) "
+            "in .env and restart the backend."
+        )
+    return text
+
+
 def run_pipeline(document_id: int, *, ocr=None, llm=None, layout=_UNSET) -> Document:
     doc = Document.objects.select_related("workspace").get(pk=document_id)
-    ocr = ocr or services.get_ocr()
-    llm = llm or services.get_llm()
-    layout = services.get_layout() if layout is _UNSET else layout
     doc.status = Document.Status.PROCESSING
     doc.error = ""
     doc.progress = initial_progress()
     doc.save(update_fields=["status", "error", "progress", "updated_at"])
     step = "load"
     try:
+        # Built inside the try: a missing API key or model must fail this document, not the request.
+        ocr = ocr or services.get_ocr()
+        llm = llm or services.get_llm()
+        layout = services.get_layout() if layout is _UNSET else layout
         with llm_context.usage_context(workspace_id=doc.workspace_id, document_id=doc.id):
             publish(doc, "load", "running")
             with doc.file.open("rb") as fh:
@@ -78,7 +89,7 @@ def run_pipeline(document_id: int, *, ocr=None, llm=None, layout=_UNSET) -> Docu
     except Exception as exc:  # noqa: BLE001
         log.exception("pipeline failed for document %s at %s", document_id, step)
         doc.status = Document.Status.FAILED
-        doc.error = f"{step}: {exc}"[:2000]
+        doc.error = f"{step}: {_friendly(exc)}"[:2000]
         publish(doc, step, "failed", str(exc)[:200])
     return doc
 

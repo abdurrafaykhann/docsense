@@ -162,3 +162,18 @@ def test_words_to_lines_groups_by_row_and_orders_left_to_right():
     words.reverse()
     lines = words_to_lines(words)
     assert [[w.text for w in ln] for ln in lines] == [["b", "a"], ["d", "c"]]
+
+
+def test_missing_llm_configuration_fails_the_document_not_the_request(doc, monkeypatch):
+    """Regression: services were built outside the try block, so a missing API key crashed the
+    upload request and left the document stuck."""
+    from apps.pipeline import services
+
+    def no_key():
+        raise ValueError("Did not find groq_api_key, please add an environment variable")
+
+    monkeypatch.setattr(services, "get_llm", no_key)
+    out = run_pipeline(doc.id, ocr=FakeOCR(LINES))
+    out.refresh_from_db()
+    assert out.status == "failed"
+    assert "GROQ_API_KEY" in out.error and out.error.startswith("load:")

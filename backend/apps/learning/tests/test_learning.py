@@ -295,3 +295,24 @@ def test_retrain_endpoint_starts_job_and_blocks_concurrent_runs(world, settings)
     assert s.post("/api/v1/admin/retrain/", {}, format="json").status_code == 400
     assert s.post("/api/v1/admin/retrain/", {"epochs": 99}, format="json").status_code == 400
     assert settings.LLM_PROVIDER == "fake"
+
+
+def test_subprocess_runner_decodes_utf8_output_and_parses_the_result_line(monkeypatch, tmp_path):
+    """Regression: the trainer prints non-cp1252 characters; decoding must not crash on Windows."""
+    import subprocess
+    import types
+
+    payload = {"previous": {}, "new": {}, "weights": "w.pt"}
+    out = "progress \u2501\u2501\u2501 \u2713\nRESULT " + json.dumps(payload) + "\n"
+    seen = {}
+
+    def fake_run(cmd, **kw):
+        seen.update(kw)
+        return types.SimpleNamespace(returncode=0, stdout=out, stderr="")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    got = services.subprocess_runner(
+        {"feedback": str(tmp_path), "base": "b.pt", "out": str(tmp_path), "epochs": 1}
+    )
+    assert got == payload
+    assert seen["encoding"] == "utf-8" and seen["env"]["PYTHONIOENCODING"] == "utf-8"

@@ -107,6 +107,10 @@ def main(argv=None) -> int:
     ap.add_argument("--arm", choices=["regex", "llm"], required=True)
     ap.add_argument("--provider", default="groq", choices=["groq", "gemini"])
     ap.add_argument("--limit", type=int)
+    ap.add_argument(
+        "--skip", type=int, default=0, help="skip the first N samples (e.g. few-shot ones)"
+    )
+    ap.add_argument("--label", help="dataset name to record in the result file")
     ap.add_argument("--idr", action="store_true", help="IDR amounts + 10%% default tax (CORD)")
     ap.add_argument("--oracle-ocr", action="store_true", help="use the set's own word boxes")
     ap.add_argument(
@@ -119,8 +123,8 @@ def main(argv=None) -> int:
     ap.add_argument("--out", help="results JSON (default docs/eval-results/<set>-<arm>.json)")
     args = ap.parse_args(argv)
 
-    samples = load_set(args.set, args.limit)
-    name = Path(args.set).name
+    samples = load_set(args.set, (args.limit + args.skip) if args.limit else None)[args.skip :]
+    name = args.label or Path(args.set).name
 
     from apps.llm.cache import MemoryCache
     from apps.llm.client import LLMClient, Provider
