@@ -12,3 +12,7 @@ staticfiles/
 mlruns/
 ml/models/*.pt
 test_media/
+ml/.cache/
+ml/data/cord/
+ml/data/*/images/
+ml/runs/

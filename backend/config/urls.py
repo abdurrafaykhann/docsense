@@ -7,4 +7,5 @@ urlpatterns = [
     path("api/v1/", include("apps.accounts.urls")),
     path("api/v1/", include("apps.workspaces.urls")),
     path("api/v1/", include("apps.documents.urls")),
+    path("api/v1/", include("apps.evaluation.urls")),
 ]

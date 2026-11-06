@@ -2,6 +2,7 @@ import { useAuth } from './auth/AuthContext'
 import { useHashRoute } from './hooks/useHashRoute'
 import DocumentPage from './pages/DocumentPage'
 import DocumentsPage from './pages/DocumentsPage'
+import EvaluationPage from './pages/EvaluationPage'
 import LoginPage from './pages/LoginPage'
 import SettingsPage from './pages/SettingsPage'
 
@@ -27,10 +28,13 @@ export default function App() {
       <nav className="flex items-center gap-5 border-b border-slate-800 pb-3 text-sm">
         <strong className="text-lg">DocSense</strong>
         {link('#/documents', 'Documents', !section || section === 'documents')}
+        {link('#/evaluation', 'Evaluation', section === 'evaluation')}
         {link('#/settings', 'Settings', section === 'settings')}
       </nav>
       {section === 'settings' ? (
         <SettingsPage />
+      ) : section === 'evaluation' ? (
+        <EvaluationPage />
       ) : section === 'documents' && arg ? (
         <DocumentPage workspaceId={workspaceId} id={Number(arg)} />
       ) : (

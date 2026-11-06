@@ -10,13 +10,9 @@ from django.db import transaction
 
 from apps.documents.models import Document, Extraction, FieldValue, Page
 from apps.llm import context as llm_context
-from apps.validation import rules, scoring
 from apps.validation.schema import NUMERIC_FIELDS
 
-from . import extract as extract_mod
-from . import services
-from .cleanup import clean_image
-from .grouping import pages_to_prompt_text
+from . import core, services
 from .loader import encode_jpeg, load_pages
 from .progress import initial_progress, publish
 
@@ -47,40 +43,20 @@ def run_pipeline(document_id: int, *, ocr=None, llm=None) -> Document:
                 images = load_pages(fh.read(), doc.content_type, settings.MAX_PAGES_PER_DOC)
             publish(doc, "load", "done", f"{len(images)} page(s)")
 
-            step = "cleanup"
-            publish(doc, "cleanup", "running")
-            cleaned, notes = [], []
-            for img in images:
-                out, info = clean_image(img)
-                cleaned.append(out)
-                notes.append(info["deskew_deg"])
-            publish(doc, "cleanup", "done", f"deskew {notes}°")
+            def on_step(name: str, status: str, detail: str = "") -> None:
+                nonlocal step
+                step = name
+                publish(doc, name, status, detail)
 
-            step = "ocr"
-            publish(doc, "ocr", "running")
-            words_by_page = {i + 1: ocr.read(img, page=i + 1) for i, img in enumerate(cleaned)}
-            all_words = [w for p in sorted(words_by_page) for w in words_by_page[p]]
-            publish(doc, "ocr", "done", f"{len(all_words)} words")
-
-            step = "extract"
-            publish(doc, "extract", "running")
-            text = pages_to_prompt_text(words_by_page, settings.LLM_MAX_PROMPT_CHARS)
-            inv = extract_mod.extract(llm, text)
+            res = core.process(
+                images, ocr, llm, max_chars=settings.LLM_MAX_PROMPT_CHARS, on_step=on_step
+            )
             provider = getattr(getattr(llm, "providers", [None])[0], "name", "") or ""
-            publish(doc, "extract", "done")
-
-            step = "validate"
-            publish(doc, "validate", "running")
-            issues = rules.validate(inv)
-            scores = scoring.score_fields(inv, issues, all_words)
-            overall = scoring.overall_confidence(scores)
-            review = scoring.needs_review(scores, issues)
-            publish(doc, "validate", "done", f"{len(issues)} issue(s)")
 
             step = "save"
             publish(doc, "save", "running")
-            _persist(doc, cleaned, words_by_page, inv, issues, scores, overall, review, provider)
-            publish(doc, "save", "done", "needs review" if review else "ok")
+            _persist(doc, res, provider)
+            publish(doc, "save", "done", "needs review" if res.needs_review else "ok")
     except Exception as exc:  # noqa: BLE001
         log.exception("pipeline failed for document %s at %s", document_id, step)
         doc.status = Document.Status.FAILED
@@ -90,7 +66,9 @@ def run_pipeline(document_id: int, *, ocr=None, llm=None) -> Document:
 
 
 @transaction.atomic
-def _persist(doc, cleaned, words_by_page, inv, issues, scores, overall, review, provider):
+def _persist(doc, res, provider):
+    cleaned, words_by_page, inv = res.cleaned, res.words_by_page, res.invoice
+    issues, scores, overall, review = res.issues, res.scores, res.overall, res.needs_review
     Page.objects.filter(document=doc).delete()
     for i, img in enumerate(cleaned, start=1):
         page = Page(

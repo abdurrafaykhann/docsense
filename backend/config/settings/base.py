@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "apps.llm",
     "apps.documents",
     "apps.pipeline",
+    "apps.evaluation",
 ]
 
 MIDDLEWARE = [

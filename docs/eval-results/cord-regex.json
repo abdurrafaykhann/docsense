@@ -1,0 +1,5420 @@
+{
+ "kind": "extraction",
+ "dataset": "cord",
+ "arm": "regex",
+ "n": 95,
+ "ocr": "doctr",
+ "git_sha": "4447d8a",
+ "created_at": "2026-11-06T15:50:34.261536+00:00",
+ "ocr_cache": {
+  "hits": 0,
+  "misses": 95
+ },
+ "metrics": {
+  "n_docs": 95,
+  "per_field": {
+   "subtotal": {
+    "precision": 0.9524,
+    "recall": 0.625,
+    "f1": 0.7547,
+    "support": 64
+   },
+   "sales_tax": {
+    "precision": 0.9545,
+    "recall": 0.5122,
+    "f1": 0.6667,
+    "support": 41
+   },
+   "total": {
+    "precision": 0.6316,
+    "recall": 0.6316,
+    "f1": 0.6316,
+    "support": 95
+   }
+  },
+  "micro": {
+   "precision": 0.761,
+   "recall": 0.605,
+   "f1": 0.6741,
+   "support": 200
+  },
+  "line_items": {
+   "precision": 0.3224,
+   "recall": 0.2085,
+   "f1": 0.2532,
+   "support": 235
+  },
+  "total_exact_match": 0.6316,
+  "review_rate": 1.0,
+  "error_catch_rate": 1.0,
+  "auto_accept_precision": null,
+  "validation_pass_rate": 0.0,
+  "mean_prompt_tokens_est": 47.7,
+  "llm_requests": 95,
+  "errors": 0
+ },
+ "docs": [
+  {
+   "id": "cord_0000",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2533,
+   "issues": [
+    "missing_field",
+    "tax_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 202,
+   "pred": {
+    "vendor_name": "TOTAL DISC $",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "EDC CIMB NIAGA No",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 60000.0
+     }
+    ],
+    "subtotal": 60000.0,
+    "tax_rate": null,
+    "sales_tax": 5455.0,
+    "total": 60000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 14.12
+  },
+  {
+   "id": "cord_0001",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4129,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 187,
+   "pred": {
+    "vendor_name": "sas",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "J.STB PROMO",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 17500.0
+     },
+     {
+      "description": "Y.B.BAT",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 46000.0
+     },
+     {
+      "description": "Y.BASO PROM",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 27500.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 91000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     3,
+     3,
+     3
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.69
+  },
+  {
+   "id": "cord_0002",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2306,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 178,
+   "pred": {
+    "vendor_name": "1 JASMINE MT (L)",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "LUCONUT JELLY ( L )",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 4000.0
+     },
+     {
+      "description": "Qupua Nnt",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 102.0
+     }
+    ],
+    "subtotal": 28000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 1.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.44
+  },
+  {
+   "id": "cord_0003",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4484,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 167,
+   "pred": {
+    "vendor_name": "- & deka : - - A à - - L 4",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "DONAT GULA",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 11000.0
+     }
+    ],
+    "subtotal": 11000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 11000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     1,
+     1,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.99
+  },
+  {
+   "id": "cord_0004",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4177,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 262,
+   "pred": {
+    "vendor_name": "UTU - I selaaallll",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Dowt BLNOKCOFFE",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 82000.0
+     },
+     {
+      "description": "OIK n CHINENT",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 54000.0
+     },
+     {
+      "description": "DISCOWUT",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 19400.0
+     },
+     {
+      "description": "OR | Tor AL",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 174600.0
+     },
+     {
+      "description": "GASH",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 200000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 200000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     5,
+     3
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 3.52
+  },
+  {
+   "id": "cord_0005",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4485,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 116,
+   "pred": {
+    "vendor_name": "TRAD KY TOAST CARTE",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "ITEMS",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1.0
+     },
+     {
+      "description": "SUBTTL",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 28182.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": 10.0,
+    "sales_tax": null,
+    "total": 31000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 4.18
+  },
+  {
+   "id": "cord_0006",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3999,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 199,
+   "pred": {
+    "vendor_name": "mE Jaurs - -",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 46000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     3
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.52
+  },
+  {
+   "id": "cord_0007",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4295,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 135,
+   "pred": {
+    "vendor_name": "Kupon 15",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Kupon",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 100000.0
+     },
+     {
+      "description": "ADD CHICKEN BO",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 909.0
+     },
+     {
+      "description": "Sublotal",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 100909.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": 10091.0,
+    "total": 113000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     1,
+     3,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.91
+  },
+  {
+   "id": "cord_0008",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2453,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 174,
+   "pred": {
+    "vendor_name": "-",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 45455.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.39
+  },
+  {
+   "id": "cord_0009",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3002,
+   "issues": [
+    "missing_field",
+    "total_mismatch"
+   ],
+   "prompt_chars": 138,
+   "pred": {
+    "vendor_name": "J - AuntleAnne",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 17000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 20000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.92
+  },
+  {
+   "id": "cord_0010",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3992,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 88,
+   "pred": {
+    "vendor_name": "1 BANABERRY FRESH CREAM CAK 230,000",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 230000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.78
+  },
+  {
+   "id": "cord_0011",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4333,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 182,
+   "pred": {
+    "vendor_name": "TOTAL (2 iten)",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "CC.V Visa.RCA",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 120000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 0.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     0
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.85
+  },
+  {
+   "id": "cord_0012",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3718,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 209,
+   "pred": {
+    "vendor_name": "a",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "a | * CUMN",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 60.0
+     },
+     {
+      "description": "BASO MU",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1.0
+     },
+     {
+      "description": "DEP",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 7002.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": 10.0,
+    "sales_tax": null,
+    "total": 2002.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     3,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.98
+  },
+  {
+   "id": "cord_0013",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2322,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "tax_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 279,
+   "pred": {
+    "vendor_name": "1 RedVelvet Cheese Slc",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Coupon",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 100000.0
+     }
+    ],
+    "subtotal": 238000.0,
+    "tax_rate": null,
+    "sales_tax": 25585.0,
+    "total": 281435.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     6
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.65
+  },
+  {
+   "id": "cord_0014",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3978,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 144,
+   "pred": {
+    "vendor_name": "XXI",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 63000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.98
+  },
+  {
+   "id": "cord_0015",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4793,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 226,
+   "pred": {
+    "vendor_name": "1 [LG] BLACK SAKURA",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 63636.0,
+    "tax_rate": 10.0,
+    "sales_tax": 6364.0,
+    "total": 70000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.15
+  },
+  {
+   "id": "cord_0016",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3566,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch"
+   ],
+   "prompt_chars": 253,
+   "pred": {
+    "vendor_name": "Goblin't S Mace 1",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Goblin't S Mace",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 25000.0
+     },
+     {
+      "description": "Mozarella Hot",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 38000.0
+     },
+     {
+      "description": "Chill Pepper",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 14000.0
+     },
+     {
+      "description": "Cheese",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 14000.0
+     },
+     {
+      "description": "Plastik Amook",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1.0
+     },
+     {
+      "description": "Plastik Putih",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1.0
+     },
+     {
+      "description": "Debit",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 91000.0
+     }
+    ],
+    "subtotal": 91000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 91000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     4,
+     7,
+     6
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.93
+  },
+  {
+   "id": "cord_0017",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.338,
+   "issues": [
+    "missing_field",
+    "total_mismatch"
+   ],
+   "prompt_chars": 111,
+   "pred": {
+    "vendor_name": "Kembalian",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Propolis Cair",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 156000.0
+     }
+    ],
+    "subtotal": 156000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 158000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     1,
+     1,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.72
+  },
+  {
+   "id": "cord_0018",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4355,
+   "issues": [
+    "missing_field",
+    "missing_field"
+   ],
+   "prompt_chars": 111,
+   "pred": {
+    "vendor_name": null,
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "NET SALES",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 100000.0
+     },
+     {
+      "description": "ANOUNT DUE",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 176000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": 16000.0,
+    "total": 176000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 1.74
+  },
+  {
+   "id": "cord_0019",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2377,
+   "issues": [
+    "missing_field",
+    "tax_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 217,
+   "pred": {
+    "vendor_name": "1 cashew nute chkn",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 325600.0,
+    "tax_rate": 10.0,
+    "sales_tax": 34351.0,
+    "total": 377859.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     5
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.97
+  },
+  {
+   "id": "cord_0020",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4639,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 196,
+   "pred": {
+    "vendor_name": "NASI GOR SFD TLR",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 0.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.15
+  },
+  {
+   "id": "cord_0021",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3547,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 153,
+   "pred": {
+    "vendor_name": "fais rs I",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 40000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.05
+  },
+  {
+   "id": "cord_0022",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4584,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 116,
+   "pred": {
+    "vendor_name": "6 TWIST DONUT",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 63000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.84
+  },
+  {
+   "id": "cord_0023",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4591,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 221,
+   "pred": {
+    "vendor_name": "Total Items",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Rp,",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 56000.0
+     },
+     {
+      "description": "Debet Card",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 118000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 3.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     3
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.79
+  },
+  {
+   "id": "cord_0024",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3999,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 212,
+   "pred": {
+    "vendor_name": "sas Les aaurs",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 43000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     3
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.87
+  },
+  {
+   "id": "cord_0025",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.25,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch"
+   ],
+   "prompt_chars": 257,
+   "pred": {
+    "vendor_name": "inl BANLAA - As",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "esar",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 65000.0
+     }
+    ],
+    "subtotal": 138000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 138000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     1,
+     1,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.86
+  },
+  {
+   "id": "cord_0026",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3593,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 172,
+   "pred": {
+    "vendor_name": "PKT AYAM OTAK 2,000 ITEMG 56,00 5.800",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "PKT AYAM OTAK",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 5800.0
+     },
+     {
+      "description": "Bvstoie",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 61600.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 61600.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 1.85
+  },
+  {
+   "id": "cord_0027",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2116,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "tax_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 191,
+   "pred": {
+    "vendor_name": "SAMGYOPSAL",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "SAMGYOPSAL",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 194000.0
+     },
+     {
+      "description": "SUL LUNG TANG",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 75000.0
+     },
+     {
+      "description": "MAKOLI",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 100000.0
+     },
+     {
+      "description": "VAT",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 38745.0
+     }
+    ],
+    "subtotal": 369000.0,
+    "tax_rate": null,
+    "sales_tax": 38745.0,
+    "total": 426195.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     3,
+     4,
+     3
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.97
+  },
+  {
+   "id": "cord_0028",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4928,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 314,
+   "pred": {
+    "vendor_name": "COLD OCHA",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "COLD OCHA",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 10909.0
+     },
+     {
+      "description": "BCA PROMO",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 54455.0
+     },
+     {
+      "description": "KAKE UDON",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 0.0
+     },
+     {
+      "description": "SKEWERED SHUMAI",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 12727.0
+     },
+     {
+      "description": "SKEWERED TOFU ROLL",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 12727.0
+     },
+     {
+      "description": "EBI TEMPURA",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 13636.0
+     },
+     {
+      "description": "KITSUNE UDON (KIDS)",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 28182.0
+     },
+     {
+      "description": "NBCA EDC (",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 145900.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": 13264.0,
+    "total": 132636.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     6,
+     8,
+     6
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.82
+  },
+  {
+   "id": "cord_0029",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4527,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 120,
+   "pred": {
+    "vendor_name": "Kupon 3",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 28636.0,
+    "tax_rate": 10.0,
+    "sales_tax": 2864.0,
+    "total": 31500.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.7
+  },
+  {
+   "id": "cord_0030",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4014,
+   "issues": [
+    "missing_field",
+    "unusual_tax_rate"
+   ],
+   "prompt_chars": 172,
+   "pred": {
+    "vendor_name": "1",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Disc",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 85500.0
+     },
+     {
+      "description": "SUBTTL",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 85500.0
+     },
+     {
+      "description": "SVC CHG",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 10260.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": 6.0,
+    "sales_tax": 18126.0,
+    "total": 113888.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     3,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.56
+  },
+  {
+   "id": "cord_0031",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.1386,
+   "issues": [
+    "missing_field",
+    "total_mismatch"
+   ],
+   "prompt_chars": 133,
+   "pred": {
+    "vendor_name": "Bautsau",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 24000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 824000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.35
+  },
+  {
+   "id": "cord_0032",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4391,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 235,
+   "pred": {
+    "vendor_name": "1",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Disc",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 67000.0
+     },
+     {
+      "description": "SUBTTL",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 117500.0
+     },
+     {
+      "description": "SVC CHG",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 11070.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": 10.0,
+    "sales_tax": 19557.0,
+    "total": 148127.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     3,
+     3
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 1.8
+  },
+  {
+   "id": "cord_0033",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2341,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 188,
+   "pred": {
+    "vendor_name": "Ash Chick Sambal Matah 5",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Ash Chick Sambal Matah",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 75000.0
+     },
+     {
+      "description": "Jamur Goreng",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 10000.0
+     },
+     {
+      "description": "Pajak (",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 8500.0
+     }
+    ],
+    "subtotal": 85000.0,
+    "tax_rate": 10.0,
+    "sales_tax": null,
+    "total": 93500.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     2,
+     3,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 1.67
+  },
+  {
+   "id": "cord_0034",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4705,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 211,
+   "pred": {
+    "vendor_name": "2 TWIST DONUT",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 0.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     4
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.98
+  },
+  {
+   "id": "cord_0035",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4098,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 143,
+   "pred": {
+    "vendor_name": "mau a",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "TEMS",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 40000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 100000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.54
+  },
+  {
+   "id": "cord_0036",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4794,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 322,
+   "pred": {
+    "vendor_name": "1 XLB Org Park - 10x",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "ITEMS",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 561800.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": 60394.0,
+    "total": 664329.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     9
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 2.87
+  },
+  {
+   "id": "cord_0037",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3293,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 215,
+   "pred": {
+    "vendor_name": "Snack Lestari All",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 48000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.66
+  },
+  {
+   "id": "cord_0038",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3214,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 371,
+   "pred": {
+    "vendor_name": "Chicken Maryland",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Cappucino (Hot/Iced)",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 30303.0
+     },
+     {
+      "description": "Naga Lychee Juice",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 34632.0
+     },
+     {
+      "description": "Cafe Latte",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 30303.0
+     },
+     {
+      "description": "Hot Chocolate Marshmallo",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 43290.0
+     },
+     {
+      "description": "Chicken Cesar Salad",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 12987.0
+     },
+     {
+      "description": "Mineral Water",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 12987.0
+     },
+     {
+      "description": "Mineral Water",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 25974.0
+     },
+     {
+      "description": "inhee/esch/lesonv/lernn",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 47619.0
+     }
+    ],
+    "subtotal": 316017.0,
+    "tax_rate": 5.0,
+    "sales_tax": null,
+    "total": 365000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     4,
+     8,
+     10
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.64
+  },
+  {
+   "id": "cord_0039",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2673,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 141,
+   "pred": {
+    "vendor_name": "1 Chicken HCC, 1Pcs",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "P.Rest",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1500.0
+     }
+    ],
+    "subtotal": 15000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 16500.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 2.31
+  },
+  {
+   "id": "cord_0040",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.432,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 223,
+   "pred": {
+    "vendor_name": "A - BARE",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Box of",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 6.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 165000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 2.32
+  },
+  {
+   "id": "cord_0041",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3767,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 104,
+   "pred": {
+    "vendor_name": "XXI",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 30000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.92
+  },
+  {
+   "id": "cord_0042",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3826,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 180,
+   "pred": {
+    "vendor_name": "XXI",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 88000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     4
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.85
+  },
+  {
+   "id": "cord_0043",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4023,
+   "issues": [
+    "missing_field",
+    "unusual_tax_rate"
+   ],
+   "prompt_chars": 154,
+   "pred": {
+    "vendor_name": "1X S-Bubble Milk Tea @20,000 20,000",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": 100.0,
+    "sales_tax": null,
+    "total": 40000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.77
+  },
+  {
+   "id": "cord_0044",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4845,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 290,
+   "pred": {
+    "vendor_name": "COPIA 1 /GB",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "COPIA",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 45000.0
+     },
+     {
+      "description": "PLASTIC BAG RED CENTRAL SI",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 0.0
+     },
+     {
+      "description": "COPIA",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 18000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 3.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     1,
+     3,
+     3
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.02
+  },
+  {
+   "id": "cord_0045",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2799,
+   "issues": [
+    "missing_field",
+    "unusual_tax_rate",
+    "tax_mismatch"
+   ],
+   "prompt_chars": 163,
+   "pred": {
+    "vendor_name": "ECA",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 22728.0,
+    "tax_rate": 25.0,
+    "sales_tax": 2272.0,
+    "total": 25000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.8
+  },
+  {
+   "id": "cord_0046",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3508,
+   "issues": [
+    "missing_field",
+    "total_mismatch"
+   ],
+   "prompt_chars": 148,
+   "pred": {
+    "vendor_name": "1 Ptgs Eggtart",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "DUE",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 23000.0
+     }
+    ],
+    "subtotal": 23000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 2.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.74
+  },
+  {
+   "id": "cord_0047",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3821,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 160,
+   "pred": {
+    "vendor_name": "1 SpuFrice Cadiurry",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Sublulal",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 17727.0
+     },
+     {
+      "description": "FBI",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1773.0
+     },
+     {
+      "description": "Labh",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 100000.0
+     },
+     {
+      "description": "Chanyes",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 80500.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 19.9
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     4,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.88
+  },
+  {
+   "id": "cord_0048",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.411,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 301,
+   "pred": {
+    "vendor_name": "bud -",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "trair",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 3.0
+     },
+     {
+      "description": "(TA) NASI V RG TERI",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 165460.0
+     },
+     {
+      "description": "(TA) BIHUN GORENG",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 40456.0
+     },
+     {
+      "description": "(TA) KWETIAW SEFAFOOD",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 42274.0
+     },
+     {
+      "description": "(TA) NASI GORENG",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 55456.0
+     },
+     {
+      "description": "ITEMS",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 303646.0
+     },
+     {
+      "description": "e Rounding",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 334011.0
+     },
+     {
+      "description": "Rounding",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 11.0
+     },
+     {
+      "description": "DEBIT BCA",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 334000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": 10.0,
+    "sales_tax": null,
+    "total": 334000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     4,
+     9,
+     4
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 1.86
+  },
+  {
+   "id": "cord_0049",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.1946,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 199,
+   "pred": {
+    "vendor_name": "a",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "THAI ICED TEA",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 20000.0
+     }
+    ],
+    "subtotal": 40000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 100000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     1,
+     1,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.8
+  },
+  {
+   "id": "cord_0050",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.1599,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 232,
+   "pred": {
+    "vendor_name": "ymiy",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Servi Charge",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 5350.0
+     },
+     {
+      "description": "Pajak Rest",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 11235.0
+     },
+     {
+      "description": "M | = | = A | M",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 5.0
+     }
+    ],
+    "subtotal": 107000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 123585.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     3,
+     3
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 2.33
+  },
+  {
+   "id": "cord_0051",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.466,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 120,
+   "pred": {
+    "vendor_name": "Drant",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "KACANG MERAH",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 10000.0
+     }
+    ],
+    "subtotal": 10000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 10000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     1,
+     1,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.02
+  },
+  {
+   "id": "cord_0052",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4769,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 139,
+   "pred": {
+    "vendor_name": "1 APPLE GINNAMON PASTRY",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "CARD",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 0.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 0.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.97
+  },
+  {
+   "id": "cord_0053",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2819,
+   "issues": [
+    "missing_field",
+    "total_mismatch"
+   ],
+   "prompt_chars": 153,
+   "pred": {
+    "vendor_name": "eete",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "AIR MINERAL | .",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 181.0
+     }
+    ],
+    "subtotal": 181.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 10000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.18
+  },
+  {
+   "id": "cord_0054",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2304,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 135,
+   "pred": {
+    "vendor_name": "1 PHO BO TAI",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Pay",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 100000.0
+     }
+    ],
+    "subtotal": 55000.0,
+    "tax_rate": null,
+    "sales_tax": 5500.0,
+    "total": 40500.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.29
+  },
+  {
+   "id": "cord_0055",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2623,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 338,
+   "pred": {
+    "vendor_name": "2 Tahu-Isi",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Taki",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 61849.0
+     }
+    ],
+    "subtotal": 618490.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 680500.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     9
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 3.02
+  },
+  {
+   "id": "cord_0056",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.286,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch"
+   ],
+   "prompt_chars": 202,
+   "pred": {
+    "vendor_name": "Topping Milo Sparkle (untuk 1 Po",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Topping Milo Sparkle (untuk",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1.0
+     },
+     {
+      "description": "Bola Ubi Mini Original (",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 14.0
+     }
+    ],
+    "subtotal": 26250.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 26250.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.6
+  },
+  {
+   "id": "cord_0057",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3312,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "unusual_tax_rate"
+   ],
+   "prompt_chars": 336,
+   "pred": {
+    "vendor_name": "TALAH UNGU",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "TALAH UNGU",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 6500.0
+     },
+     {
+      "description": "DISC ITEM",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 40.0
+     },
+     {
+      "description": "AMOUNT",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 600.0
+     },
+     {
+      "description": "AREM - AREM",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 8000.0
+     },
+     {
+      "description": "AHOUNT",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 3200.0
+     },
+     {
+      "description": "LEMPER",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 18000.0
+     },
+     {
+      "description": "DISC ITEM",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 40.0
+     },
+     {
+      "description": "AMOUNT",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 7200.0
+     },
+     {
+      "description": "TEH KOTAK",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 5000.0
+     },
+     {
+      "description": "CARD",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 24500.0
+     }
+    ],
+    "subtotal": 24500.0,
+    "tax_rate": 40.0,
+    "sales_tax": null,
+    "total": 24500.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     4,
+     10,
+     6
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.72
+  },
+  {
+   "id": "cord_0058",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3985,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 145,
+   "pred": {
+    "vendor_name": "XXI",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 48000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.66
+  },
+  {
+   "id": "cord_0059",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3177,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 215,
+   "pred": {
+    "vendor_name": "trkagd",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Kopi Susu Kampung.",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 19000.0
+     },
+     {
+      "description": "Kopi Susu Kampung Less Ice",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 0.0
+     },
+     {
+      "description": "Kopi Susu Kampung.",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 38000.0
+     }
+    ],
+    "subtotal": 57000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 57000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     2,
+     3,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.69
+  },
+  {
+   "id": "cord_0060",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4986,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 105,
+   "pred": {
+    "vendor_name": "SINGLE SCOOP 16.000",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "SINGLE SCOOP",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 16000.0
+     },
+     {
+      "description": "CATEND",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 50000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 0.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     1,
+     2,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.97
+  },
+  {
+   "id": "cord_0061",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3756,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 112,
+   "pred": {
+    "vendor_name": "ubur Polos + Telur",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Votal",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 13000.0
+     }
+    ],
+    "subtotal": 13000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 13000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.94
+  },
+  {
+   "id": "cord_0062",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3328,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 136,
+   "pred": {
+    "vendor_name": "PLASTIL PILLIN JURTA",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "ANOUINT",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 8.0
+     },
+     {
+      "description": "DIANGE",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 40080.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 20036.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.87
+  },
+  {
+   "id": "cord_0063",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3776,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 110,
+   "pred": {
+    "vendor_name": "Total Item:",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 9500.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.78
+  },
+  {
+   "id": "cord_0064",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4122,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 142,
+   "pred": {
+    "vendor_name": "auee",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "auee | a",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1.0
+     },
+     {
+      "description": "ICED TT | '",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 20000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 20000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     1,
+     2,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.12
+  },
+  {
+   "id": "cord_0065",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2922,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 187,
+   "pred": {
+    "vendor_name": "Euz:",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 74000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     3
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.41
+  },
+  {
+   "id": "cord_0066",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.288,
+   "issues": [
+    "missing_field",
+    "tax_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 424,
+   "pred": {
+    "vendor_name": "2 UDANG RE 216,000 432,000",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "FOOD",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1213000.0
+     },
+     {
+      "description": "BEVERAGES",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 60000.0
+     },
+     {
+      "description": "OTHERS",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 70000.0
+     }
+    ],
+    "subtotal": 1343000.0,
+    "tax_rate": 10.0,
+    "sales_tax": 142358.0,
+    "total": 1565938.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     3,
+     8
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.14
+  },
+  {
+   "id": "cord_0067",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2638,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 110,
+   "pred": {
+    "vendor_name": "Cuka Apel Tetes 1",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Cuka Apel Tetes",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1.0
+     }
+    ],
+    "subtotal": 198000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 200200.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 4.23
+  },
+  {
+   "id": "cord_0068",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.277,
+   "issues": [
+    "missing_field",
+    "unusual_tax_rate",
+    "total_mismatch"
+   ],
+   "prompt_chars": 157,
+   "pred": {
+    "vendor_name": "1 Choco Devil",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 15909.0,
+    "tax_rate": 90.0,
+    "sales_tax": null,
+    "total": 20000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.78
+  },
+  {
+   "id": "cord_0069",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4332,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 185,
+   "pred": {
+    "vendor_name": "Total Item:",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Tendered",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 25000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 22000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.1
+  },
+  {
+   "id": "cord_0070",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4118,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 273,
+   "pred": {
+    "vendor_name": "1 BLACKCURRANT",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "** BEVERAGE",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 64000.0
+     },
+     {
+      "description": "** FOOD",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 214000.0
+     },
+     {
+      "description": "SUBTTL",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 278000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": 30024.0,
+    "total": 330264.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     3,
+     4
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 3.24
+  },
+  {
+   "id": "cord_0071",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4846,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 236,
+   "pred": {
+    "vendor_name": "1 CHOCO PUFF",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 256363.0,
+    "tax_rate": null,
+    "sales_tax": 25637.0,
+    "total": 282000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     6
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.86
+  },
+  {
+   "id": "cord_0072",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4975,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 130,
+   "pred": {
+    "vendor_name": "TRIPPLE CHEESE",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 17000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 17000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.45
+  },
+  {
+   "id": "cord_0073",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3992,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 113,
+   "pred": {
+    "vendor_name": "1 Lemon Tea (L)",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 30000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.4
+  },
+  {
+   "id": "cord_0074",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4987,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 154,
+   "pred": {
+    "vendor_name": "Total Item:",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "otal.",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 22000.0
+     },
+     {
+      "description": "endered",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 22000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 2.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.32
+  },
+  {
+   "id": "cord_0075",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2882,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 128,
+   "pred": {
+    "vendor_name": "amt -",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 25000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 25000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.77
+  },
+  {
+   "id": "cord_0076",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 150,
+   "pred": {
+    "vendor_name": "Choce Mochi",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 50000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     3
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.37
+  },
+  {
+   "id": "cord_0077",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3091,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch"
+   ],
+   "prompt_chars": 245,
+   "pred": {
+    "vendor_name": "Ba aa LBAN -",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Chocolate Log Cake",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 115000.0
+     },
+     {
+      "description": "Snowman Cake Chocolate",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 60000.0
+     },
+     {
+      "description": "Strawberry Log Cake",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 210000.0
+     },
+     {
+      "description": "VISA MASTER",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 385000.0
+     }
+    ],
+    "subtotal": 385000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 385000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     3,
+     4,
+     3
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.83
+  },
+  {
+   "id": "cord_0078",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4202,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 133,
+   "pred": {
+    "vendor_name": "1 COOKTES AND CREAM",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "PAJAK",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 2091.0
+     },
+     {
+      "description": "Jendered",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 25000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 23000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 1.87
+  },
+  {
+   "id": "cord_0079",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3171,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch"
+   ],
+   "prompt_chars": 151,
+   "pred": {
+    "vendor_name": "Kroket",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Other | Rp",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 39600.0
+     }
+    ],
+    "subtotal": 36000.0,
+    "tax_rate": 10.0,
+    "sales_tax": 3600.0,
+    "total": 39600.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.8
+  },
+  {
+   "id": "cord_0080",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2431,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 375,
+   "pred": {
+    "vendor_name": "3 Nasi Putih",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "TtL TtL ATART",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 159500.0
+     }
+    ],
+    "subtotal": 17950.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 197450.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     11
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 2.81
+  },
+  {
+   "id": "cord_0081",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2984,
+   "issues": [
+    "missing_field",
+    "total_mismatch"
+   ],
+   "prompt_chars": 161,
+   "pred": {
+    "vendor_name": "Breaduife",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "DUE",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 22000.0
+     }
+    ],
+    "subtotal": 22000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 2.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.88
+  },
+  {
+   "id": "cord_0082",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3075,
+   "issues": [
+    "missing_field",
+    "total_mismatch"
+   ],
+   "prompt_chars": 152,
+   "pred": {
+    "vendor_name": "1 PHO TAI CHIN",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 36500.0,
+    "tax_rate": 0.0,
+    "sales_tax": null,
+    "total": 40150.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 2.12
+  },
+  {
+   "id": "cord_0083",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4155,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 185,
+   "pred": {
+    "vendor_name": "02 Auntleanney",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "VISA",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 47000.0
+     }
+    ],
+    "subtotal": 47000.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 47000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     2
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.08
+  },
+  {
+   "id": "cord_0084",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4855,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 144,
+   "pred": {
+    "vendor_name": "1 XXL Crispy Chicken",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "JEMS",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 40000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 50000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.24
+  },
+  {
+   "id": "cord_0085",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2965,
+   "issues": [
+    "missing_field",
+    "total_mismatch"
+   ],
+   "prompt_chars": 131,
+   "pred": {
+    "vendor_name": "1 CIRENG PANDAWA",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": 26818.0,
+    "tax_rate": null,
+    "sales_tax": 2681.0,
+    "total": 1.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 4.67
+  },
+  {
+   "id": "cord_0086",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 188,
+   "pred": {
+    "vendor_name": "- : . - - - - - -",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 30000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.01
+  },
+  {
+   "id": "cord_0087",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3097,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 172,
+   "pred": {
+    "vendor_name": "MASD",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 901016.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     0,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 2.07
+  },
+  {
+   "id": "cord_0088",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2308,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 156,
+   "pred": {
+    "vendor_name": "THAI ICED TEA (L)",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Jumlah Item",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1.0
+     },
+     {
+      "description": "Pajak Resto",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 1636.0
+     }
+    ],
+    "subtotal": 16363.0,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 17999.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 2.86
+  },
+  {
+   "id": "cord_0089",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.2083,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch",
+    "unusual_tax_rate",
+    "tax_mismatch",
+    "total_mismatch"
+   ],
+   "prompt_chars": 257,
+   "pred": {
+    "vendor_name": "L 1 TAHU GORENG",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "S | Serv.",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 8330.0
+     }
+    ],
+    "subtotal": 119000.0,
+    "tax_rate": 7.0,
+    "sales_tax": 12733.0,
+    "total": 140063.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     4
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 2.66
+  },
+  {
+   "id": "cord_0090",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4822,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 180,
+   "pred": {
+    "vendor_name": "BASO TAHU",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "BASO TAHU",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 43181.0
+     },
+     {
+      "description": "ES JERUK",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 13000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": 5618.0,
+    "total": 61799.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     2,
+     2,
+     2
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 1.88
+  },
+  {
+   "id": "cord_0091",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4981,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 116,
+   "pred": {
+    "vendor_name": "1 BBQ Chicken",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "ITEMS",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 41000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 9000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     1,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": false
+   },
+   "seconds": 1.85
+  },
+  {
+   "id": "cord_0092",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3667,
+   "issues": [
+    "missing_field"
+   ],
+   "prompt_chars": 218,
+   "pred": {
+    "vendor_name": "RUBLR AVAM",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "BUBUR GO",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 40000.0
+     },
+     {
+      "description": "PUYUH GO",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 6000.0
+     },
+     {
+      "description": "SATEZATICGO",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 9000.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": null,
+    "sales_tax": null,
+    "total": 55000.0
+   },
+   "score": {
+    "fields": {
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     3,
+     3,
+     3
+    ],
+    "all_correct": true,
+    "total_exact": true
+   },
+   "seconds": 1.91
+  },
+  {
+   "id": "cord_0093",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.3599,
+   "issues": [
+    "missing_field",
+    "unusual_tax_rate"
+   ],
+   "prompt_chars": 359,
+   "pred": {
+    "vendor_name": "Dancis",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "Taste/Ra; Presentat",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 77000.0
+     },
+     {
+      "description": "Attentiv",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 250690.0
+     }
+    ],
+    "subtotal": null,
+    "tax_rate": 6.0,
+    "sales_tax": null,
+    "total": 250690.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 0,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     3
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 3.66
+  },
+  {
+   "id": "cord_0094",
+   "error": null,
+   "needs_review": true,
+   "overall": 0.4109,
+   "issues": [
+    "missing_field",
+    "subtotal_mismatch"
+   ],
+   "prompt_chars": 335,
+   "pred": {
+    "vendor_name": "1 FL-Xmas 30 Off",
+    "ntn": null,
+    "strn": null,
+    "invoice_number": null,
+    "invoice_date": null,
+    "currency": "PKR",
+    "line_items": [
+     {
+      "description": "BIAYA TAMBAHAN",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 0.0
+     },
+     {
+      "description": "PEMBULATAN",
+      "quantity": null,
+      "unit_price": null,
+      "amount": 2.0
+     }
+    ],
+    "subtotal": 68180.0,
+    "tax_rate": 10.0,
+    "sales_tax": 6818.0,
+    "total": 75000.0
+   },
+   "score": {
+    "fields": {
+     "subtotal": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     },
+     "sales_tax": {
+      "tp": 0,
+      "pred": 1,
+      "truth": 1
+     },
+     "total": {
+      "tp": 1,
+      "pred": 1,
+      "truth": 1
+     }
+    },
+    "items": [
+     0,
+     2,
+     1
+    ],
+    "all_correct": false,
+    "total_exact": true
+   },
+   "seconds": 2.48
+  }
+ ]
+}

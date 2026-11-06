@@ -7,6 +7,7 @@ import re
 from pydantic import BaseModel, Field, field_validator
 
 _NUM = re.compile(r"-?\d+(?:\.\d+)?")
+_DOT_THOUSANDS = re.compile(r"\d{1,3}(?:\.\d{3}){2,}")
 
 
 def to_number(value):
@@ -15,7 +16,11 @@ def to_number(value):
         return None
     if isinstance(value, int | float):
         return float(value)
-    m = _NUM.search(str(value).replace(",", ""))
+    text = str(value)
+    dotted = _DOT_THOUSANDS.search(text)  # 1.346.000 (Indonesian style)
+    if dotted:
+        return float(dotted.group().replace(".", ""))
+    m = _NUM.search(text.replace(",", ""))
     return float(m.group()) if m else None
 
 

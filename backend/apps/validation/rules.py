@@ -10,7 +10,7 @@ from .schema import REQUIRED_FIELDS, InvoiceExtraction
 
 DEFAULT_TAX_RATE = 18.0
 # Federal GST and common provincial rates on services (configurable, see PLAN D9).
-KNOWN_TAX_RATES = {0.0, 5.0, 13.0, 15.0, 16.0, 17.0, 18.0}
+KNOWN_TAX_RATES = {0.0, 5.0, 10.0, 13.0, 15.0, 16.0, 17.0, 18.0}
 MAX_AGE_DAYS = 365 * 10
 
 
@@ -62,7 +62,9 @@ def parse_iso_date(value: str) -> date | None:
         return None
 
 
-def validate(inv: InvoiceExtraction, *, today: date | None = None) -> list[Issue]:
+def validate(
+    inv: InvoiceExtraction, *, today: date | None = None, default_rate: float = DEFAULT_TAX_RATE
+) -> list[Issue]:
     today = today or date.today()
     issues: list[Issue] = []
 
@@ -96,7 +98,7 @@ def validate(inv: InvoiceExtraction, *, today: date | None = None) -> list[Issue
         )
 
     # tax = subtotal x rate
-    rate = inv.tax_rate if inv.tax_rate is not None else DEFAULT_TAX_RATE
+    rate = inv.tax_rate if inv.tax_rate is not None else default_rate
     if inv.tax_rate is not None and inv.tax_rate not in KNOWN_TAX_RATES:
         issues.append(
             Issue("unusual_tax_rate", f"Unusual tax rate {inv.tax_rate}%", ("tax_rate",), "warn")
