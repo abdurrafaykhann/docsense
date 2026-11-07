@@ -55,6 +55,8 @@ export default function DocumentPage({
     return watchProgress(id, (e) => {
       if (e.type === 'snapshot' && e.steps) {
         setDoc((d) => (d ? { ...d, progress: e.steps! } : d))
+        // Finished before the socket connected (slow first load): the snapshot is all we will get.
+        if (e.doc_status && e.doc_status !== 'queued' && e.doc_status !== 'processing') void load()
       } else if (e.type === 'progress' && e.step) {
         setDoc((d) =>
           d
@@ -72,6 +74,14 @@ export default function DocumentPage({
       }
     })
   }, [id, load])
+
+  // Fallback if the socket drops or is blocked: poll while the document is still in flight.
+  const inFlight = doc?.status === 'queued' || doc?.status === 'processing'
+  useEffect(() => {
+    if (!inFlight) return
+    const t = setInterval(() => void load(), 3000)
+    return () => clearInterval(t)
+  }, [inFlight, load])
 
   const hasPages = (doc?.pages.length ?? 0) > 0
   useEffect(() => {
