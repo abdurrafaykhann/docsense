@@ -25,20 +25,25 @@ export type ColorBy = 'cluster' | 'vendor' | 'category'
 export function hueFor(label: string): number {
   let h = 2166136261
   for (let i = 0; i < label.length; i++) h = Math.imul(h ^ label.charCodeAt(i), 16777619)
-  return Math.abs(h) % 360
+  // final avalanche mix: FNV alone barely differs for short, similar labels ("cluster-0".."cluster-6")
+  h ^= h >>> 16
+  h = Math.imul(h, 0x85ebca6b)
+  h ^= h >>> 13
+  h = Math.imul(h, 0xc2b2ae35)
+  h ^= h >>> 16
+  return (h >>> 0) % 360
 }
 
 export function colorFor(p: UPoint, by: ColorBy): string {
+  if (by === 'cluster') {
+    if (p.cluster < 0) return 'hsl(215, 12%, 55%)'
+    // golden-angle spacing: consecutive cluster ids are always far apart on the colour wheel
+    return `hsl(${Math.round((p.cluster * 137.508) % 360)}, 75%, 62%)`
+  }
   const key =
-    by === 'cluster'
-      ? p.cluster < 0
-        ? 'unclustered'
-        : `cluster-${p.cluster}`
-      : by === 'vendor'
-        ? (p.vendor ?? 'unknown')
-        : (p.category ?? 'uncategorized')
-  if (key === 'unclustered' || key === 'unknown') return 'hsl(215 12% 55%)'
-  return `hsl(${hueFor(key)} 75% 62%)`
+    (by === 'vendor' ? p.vendor : p.category) ?? (by === 'vendor' ? 'unknown' : 'uncategorized')
+  if (key === 'unknown') return 'hsl(215, 12%, 55%)'
+  return `hsl(${hueFor(key)}, 75%, 62%)`
 }
 
 /**

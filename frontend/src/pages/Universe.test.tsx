@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, expect, test, vi } from 'vitest'
@@ -28,8 +29,8 @@ test('colours are stable per label, distinct across labels, grey for unclustered
   expect(colorFor(P({ category: 'grocery' }), 'category')).toBe(
     colorFor(P({ id: 2, category: 'grocery' }), 'category'),
   )
-  expect(colorFor(P({ cluster: -1 }), 'cluster')).toBe('hsl(215 12% 55%)')
-  expect(colorFor(P({ vendor: null }), 'vendor')).toBe('hsl(215 12% 55%)')
+  expect(colorFor(P({ cluster: -1 }), 'cluster')).toBe('hsl(215, 12%, 55%)')
+  expect(colorFor(P({ vendor: null }), 'vendor')).toBe('hsl(215, 12%, 55%)')
 })
 
 test('fallback triggers only on sustained low frame rate', () => {
@@ -92,4 +93,20 @@ test('shows an empty state before anything is built', async () => {
   )
   render(<UniversePage workspaceId={5} />)
   expect(await screen.findByText(/No documents placed yet/)).toBeInTheDocument()
+})
+
+test('colours are parseable by three.js (space-separated hsl() silently rendered every point white)', () => {
+  const white = new THREE.Color('#ffffff')
+  for (const by of ['cluster', 'vendor', 'category'] as const) {
+    const c = new THREE.Color(colorFor(P({ cluster: 2, vendor: 'Acme', category: 'grocery' }), by))
+    expect(c.equals(white)).toBe(false)
+  }
+})
+
+test('neighbouring cluster ids get well-spread hues', () => {
+  const hues = Array.from({ length: 7 }, (_, i) =>
+    Number(/hsl\((\d+)/.exec(colorFor(P({ cluster: i }), 'cluster'))![1]),
+  ).sort((a, b) => a - b)
+  expect(new Set(hues).size).toBe(7)
+  expect(Math.min(...hues.slice(1).map((h, i) => h - hues[i]))).toBeGreaterThan(20)
 })
