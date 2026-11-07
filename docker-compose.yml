@@ -15,6 +15,7 @@ x-backend: &backend
     - media:/app/media
     - ./seed:/app/seed:ro
     - ./ml/models:/app/ml/models:ro
+    - ./docs/eval-results:/docs/eval-results:ro   # shown on the Evaluation page
   depends_on:
     db: { condition: service_healthy }
     redis: { condition: service_started }

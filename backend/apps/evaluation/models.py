@@ -6,7 +6,7 @@ class EvalRun(models.Model):
 
     kind = models.CharField(max_length=20)  # extraction | layout | rag
     dataset = models.CharField(max_length=80)
-    arm = models.CharField(max_length=60)
+    arm = models.CharField(max_length=200)
     n = models.PositiveIntegerField(default=0)
     metrics = models.JSONField(default=dict)
     config = models.JSONField(default=dict)
