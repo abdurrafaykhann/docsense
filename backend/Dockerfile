@@ -13,6 +13,11 @@ RUN pip install -r requirements.txt \
    && pip install -r requirements-ml.txt; \
     fi
 
+# Bake the pretrained weights into the image and run offline afterwards. Otherwise every model load
+# makes dozens of Hugging Face hub requests, and flaky Docker DNS turns the first question into minutes.
+RUN if [ "$INSTALL_ML" = "1" ]; then       python -c "from sentence_transformers import SentenceTransformer, CrossEncoder; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2'); CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2'); from doctr.models import ocr_predictor; ocr_predictor(det_arch='db_mobilenet_v3_large', reco_arch='crnn_mobilenet_v3_small', pretrained=True)"    && echo 'models baked';     fi
+ENV HF_HUB_OFFLINE=1
+
 COPY . .
 RUN chmod +x docker-entrypoint.sh
 EXPOSE 8000
