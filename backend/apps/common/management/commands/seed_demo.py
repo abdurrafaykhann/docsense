@@ -73,19 +73,24 @@ class Command(BaseCommand):
 
         rows = json.loads((pack / "manifest.json").read_text(encoding="utf-8"))
         approved: list[Document] = []
-        for row in rows:
-            doc = self.create_document(ws, user, pack, row)
-            if doc.status == Document.Status.DONE:
-                approved.append(doc)
+        try:
+            for row in rows:
+                doc = self.create_document(ws, user, pack, row)
+                if doc.status == Document.Status.DONE:
+                    approved.append(doc)
 
-        for doc in approved:
-            index_document(doc)
-        for doc in Document.objects.filter(workspace=ws, status=Document.Status.NEEDS_REVIEW):
-            index_document(doc)
-        flags = run_detectors(ws.id)
-        placed = {"points": 0}
-        if not opts["no_universe"]:
-            placed = universe.rebuild(ws.id)
+            for doc in approved:
+                index_document(doc)
+            for doc in Document.objects.filter(workspace=ws, status=Document.Status.NEEDS_REVIEW):
+                index_document(doc)
+            flags = run_detectors(ws.id)
+            placed = {"points": 0}
+            if not opts["no_universe"]:
+                placed = universe.rebuild(ws.id)
+        except BaseException:
+            # A half-seeded workspace would be reported as "already seeded" forever.
+            ws.delete()
+            raise
         self.stdout.write(
             self.style.SUCCESS(
                 f"seeded {len(rows)} documents ({len(approved)} approved, "

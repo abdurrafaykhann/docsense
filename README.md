@@ -35,11 +35,15 @@ Gemini key; browsing, reviewing, analytics, the universe, search retrieval and t
 `cd frontend && npm install && npm run dev`. `docker build --build-arg INSTALL_ML=0` gives a small image that
 uses offline stand-ins (`OCR_ENGINE=fake EMBEDDER=hash RERANKER=overlap`).
 
-> **Honesty note:** the Docker images, `docker compose up`, and the **pgvector search path** were written and
-> statically validated (`docker compose config`; the pgvector tests are skipped on SQLite and run in CI against a
-> pgvector Postgres service) but **I could not run them here**: the Docker engine would not start in the environment
-> this was built in. Everything else below was run: the full backend natively on SQLite (including the real docTR,
-> MiniLM, cross-encoder and YOLO models), the React app in a real browser against it, and all test suites.
+> **Docker, verified:** `docker compose up --build` was run on Windows 11 / Docker Desktop. All six services start;
+> the demo seeds into PostgreSQL with 50 documents and 136 vectors mirrored into pgvector; login, cited RAG, the
+> spending agent and the frontend proxy work; a freshly uploaded invoice went through the Celery worker (docTR,
+> layout model, LLM, validators) to `done`; and the full backend test suite passes against the pgvector container
+> with nothing skipped. Running it exposed two real bugs, now fixed: a half-failed seed was reported as "already
+> seeded" forever, and the frontend container's requests were rejected by Django's `ALLOWED_HOSTS`.
+> **Memory:** the API and worker each load torch + docTR; with the default 4 GB Docker Desktop VM (half of a
+> 8 GB machine) starting both at once ran out of memory. Give Docker 6 GB or more, or start `api` first and `worker`
+> after it. Not run: the n8n workflow end to end (structure-tested only), and a cloud deployment.
 
 ## What is in it
 

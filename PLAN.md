@@ -382,5 +382,5 @@ All fifteen milestones were built and committed one at a time with their tests. 
 | Playwright + Chromium | Playwright driving the system Edge | No browser download |
 | Layout experiments a-d | a-d plus **e/f (scene augmentation)** added after the real-data failure analysis | The measured synthetic-to-real gap pointed at scale/background, so I tested that hypothesis |
 | `process_document` text-layer shortcut for digital PDFs | Not implemented; every PDF goes through OCR | Time; noted under "what I'd improve" |
-| Docker verified end to end | **Not verified in this environment** (Docker daemon unavailable); compose file validates and the app was run natively against SQLite | Environment |
+| Docker verified end to end | Verified later: compose build, 6 services, Postgres+pgvector tests, seed, RAG, agent, worker upload. Needs >= 6 GB for Docker Desktop (api + worker both load torch) | Initially the Docker engine would not start |
 | n8n workflow import tested | Structurally validated by tests; **not imported into a live n8n** (the n8n MCP connection failed) | Environment |

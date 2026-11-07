@@ -8,6 +8,7 @@ x-backend: &backend
     DATABASE_URL: postgres://docsense:docsense@db:5432/docsense
     REDIS_URL: redis://redis:6379/0
     CACHE_REDIS: "1"
+    DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,api"
     SEED_DIR: /app/seed/demo_workspace
     LAYOUT_MODEL_PATH: /app/ml/models/layout-current.pt
   volumes:
@@ -35,6 +36,7 @@ services:
       DATABASE_URL: postgres://docsense:docsense@db:5432/docsense
       REDIS_URL: redis://redis:6379/0
       CACHE_REDIS: "1"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,api"
       SEED_DIR: /app/seed/demo_workspace
       LAYOUT_MODEL_PATH: /app/ml/models/layout-current.pt
       SEED_DEMO: "1"       # one command setup: migrate + seed the demo workspace on first start
@@ -46,6 +48,7 @@ services:
       DATABASE_URL: postgres://docsense:docsense@db:5432/docsense
       REDIS_URL: redis://redis:6379/0
       CACHE_REDIS: "1"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,api"
       SEED_DIR: /app/seed/demo_workspace
       LAYOUT_MODEL_PATH: /app/ml/models/layout-current.pt
       RUN_MIGRATIONS: "0"
