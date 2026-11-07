@@ -35,15 +35,20 @@ Gemini key; browsing, reviewing, analytics, the universe, search retrieval and t
 `cd frontend && npm install && npm run dev`. `docker build --build-arg INSTALL_ML=0` gives a small image that
 uses offline stand-ins (`OCR_ENGINE=fake EMBEDDER=hash RERANKER=overlap`).
 
-> **Docker, verified:** `docker compose up --build` was run on Windows 11 / Docker Desktop. All six services start;
-> the demo seeds into PostgreSQL with 50 documents and 136 vectors mirrored into pgvector; login, cited RAG, the
-> spending agent and the frontend proxy work; a freshly uploaded invoice went through the Celery worker (docTR,
-> layout model, LLM, validators) to `done`; and the full backend test suite passes against the pgvector container
-> with nothing skipped. Running it exposed two real bugs, now fixed: a half-failed seed was reported as "already
-> seeded" forever, and the frontend container's requests were rejected by Django's `ALLOWED_HOSTS`.
-> **Memory:** the API and worker each load torch + docTR; with the default 4 GB Docker Desktop VM (half of a
-> 8 GB machine) starting both at once ran out of memory. Give Docker 6 GB or more, or start `api` first and `worker`
-> after it. Not run: the n8n workflow end to end (structure-tested only), and a cloud deployment.
+> **Docker, verified:** `docker compose up --build` was run on Windows 11 / Docker Desktop (4 GB VM, 8 GB machine).
+> All six services start; the demo seeds into PostgreSQL (50 documents, 136 vectors in pgvector); and I then clicked
+> through every page in a browser: upload with live pipeline progress, review and approve, analytics and anomaly
+> flags, the spending agent, cited RAG (including a refusal), the 2D/3D universe, the evaluation page, API keys and
+> the inbound endpoint. The full backend suite also passes against the pgvector container with nothing skipped.
+> That pass found and fixed seven real bugs, among them a UI stuck on "processing", a Postgres-only column
+> length, all 3D points rendering white, a React crash when leaving the 3D page, and a first question that took
+> minutes because model downloads went through flaky Docker DNS (the weights are now baked into the image).
+>
+> **Notes:** the first question after a cold start takes about 45 s while models load, then a few seconds. On the
+> free tiers Groq's daily token cap runs out quickly, and the app then fails over to Gemini automatically (slower).
+> Give Docker 6 GB if you can; 4 GB works but is tight with the API and worker both holding torch.
+> **Not run:** the n8n workflow end to end (structure-tested only), the Retrain button inside Docker (YOLO training
+> needs more memory than the default VM), hover/click on the 3D points, and any cloud deployment.
 
 ## What is in it
 
