@@ -4,4 +4,7 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 EXPOSE 5173
-CMD ["npm", "run", "dev"]
+# Serve the production bundle: a handful of files instead of ~hundreds of unbundled dev modules
+# (the dev server drops connections under Docker Desktop on Windows).
+RUN npm run build
+CMD ["npm", "run", "preview"]
