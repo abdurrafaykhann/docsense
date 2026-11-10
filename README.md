@@ -1,5 +1,7 @@
 # DocSense
 
+[![CI](https://github.com/abdurrafaykhann/docsense/actions/workflows/ci.yml/badge.svg)](https://github.com/abdurrafaykhann/docsense/actions/workflows/ci.yml)
+
 **AI document intelligence for invoices and receipts.** Upload a PDF or a phone photo: DocSense cleans the
 image, reads it with a local OCR engine, finds the invoice layout with a **YOLO model I trained myself on
 synthetic Pakistani invoices**, has an LLM fill a strict schema from each region's text, then **checks the
