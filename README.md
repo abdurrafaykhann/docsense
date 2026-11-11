@@ -2,6 +2,10 @@
 
 [![CI](https://github.com/abdurrafaykhann/docsense/actions/workflows/ci.yml/badge.svg)](https://github.com/abdurrafaykhann/docsense/actions/workflows/ci.yml)
 
+**Live demo (read-only): https://docsense.vercel.app** · log in with `demo@docsense.dev` / `docsense-demo-2025`.
+The hosted build is reduced (no OCR/layout model, hash-embedding search, pre-seeded data, questions capped per day);
+the full pipeline runs locally with Docker, see below.
+
 **AI document intelligence for invoices and receipts.** Upload a PDF or a phone photo: DocSense cleans the
 image, reads it with a local OCR engine, finds the invoice layout with a **YOLO model I trained myself on
 synthetic Pakistani invoices**, has an LLM fill a strict schema from each region's text, then **checks the
