@@ -129,7 +129,9 @@ export function watchProgress(
   }) => void,
 ): () => void {
   const proto = location.protocol === 'https:' ? 'wss' : 'ws'
-  const ws = new WebSocket(`${proto}://${location.host}/ws/documents/${id}/?token=${tokens.access}`)
+  // Vercel cannot proxy WebSockets; a split deployment sets VITE_WS_HOST to the API host.
+  const host = import.meta.env.VITE_WS_HOST || location.host
+  const ws = new WebSocket(`${proto}://${host}/ws/documents/${id}/?token=${tokens.access}`)
   ws.onmessage = (m) => onEvent(JSON.parse(m.data))
   return () => ws.close()
 }

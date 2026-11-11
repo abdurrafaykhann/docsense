@@ -1,0 +1,11 @@
+**/.venv
+**/node_modules
+**/__pycache__
+**/*.sqlite3
+.git
+ml/runs
+ml/data
+frontend/dist
+backend/demo_media
+backend/test_media
+backend/media

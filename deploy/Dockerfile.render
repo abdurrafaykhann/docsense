@@ -1,0 +1,15 @@
+# Light API image for a 512 MB free host (Render). No torch / docTR / YOLO: the hosted demo is
+# read-only (see apps/common/middleware.py), data is seeded into Postgres beforehand, and RAG uses
+# the hash embedder + overlap reranker. Build context is the repo root so the seed pack ships inside.
+FROM python:3.12-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 && rm -rf /var/lib/apt/lists/*
+COPY backend/requirements.txt ./
+RUN pip install -r requirements.txt
+COPY backend/ .
+COPY seed /app/seed
+COPY deploy/render-entrypoint.sh /render-entrypoint.sh
+RUN chmod +x /render-entrypoint.sh && rm -f db.sqlite3 demo.sqlite3 && rm -rf demo_media test_media
+ENV SEED_DIR=/app/seed/demo_workspace MEDIA_ROOT=/tmp/media
+ENTRYPOINT ["/render-entrypoint.sh"]

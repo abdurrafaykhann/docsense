@@ -47,6 +47,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "apps.common.middleware.DemoReadOnlyMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -167,6 +168,8 @@ RERANKER = env("RERANKER", "ce")  # ce = local cross-encoder | overlap = offline
 
 # --- Integrations ----------------------------------------------------------------
 WEBHOOKS_ALLOW_PRIVATE = env("WEBHOOKS_ALLOW_PRIVATE", "0") == "1"  # dev: allow localhost n8n
+DEMO_READONLY = env("DEMO_READONLY", "0") == "1"  # hosted public demo: no writes (see middleware)
+DEMO_ASK_DAILY_CAP = int(env("DEMO_ASK_DAILY_CAP", "150"))
 PUBLIC_APP_URL = env("PUBLIC_APP_URL", "http://localhost:5173")
 
 # --- Demo workspace ---------------------------------------------------------------
