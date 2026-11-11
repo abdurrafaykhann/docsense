@@ -96,6 +96,7 @@ REST_FRAMEWORK = {
         "apps.workspaces.auth.ApiKeyAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "EXCEPTION_HANDLER": "apps.common.exceptions.api_exception_handler",
     "DEFAULT_THROTTLE_CLASSES": [
         "apps.common.throttles.UserRateThrottle",
         "apps.common.throttles.ApiKeyRateThrottle",

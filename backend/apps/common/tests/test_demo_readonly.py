@@ -36,3 +36,11 @@ def test_ask_endpoints_pass_through_until_the_daily_cap(db):
 def test_nothing_is_blocked_when_not_a_demo(db):
     c = client_for()
     assert "demo_readonly" not in c.post("/api/v1/workspaces/1/documents/", {}).content.decode()
+
+
+def test_missing_llm_key_is_a_503_not_a_crash(db, monkeypatch):
+    from apps.common.exceptions import api_exception_handler
+
+    resp = api_exception_handler(ValueError("GOOGLE_API_KEY not found. Pass api_key"), {})
+    assert resp.status_code == 503 and "not configured" in resp.data["detail"]
+    assert api_exception_handler(KeyError("other"), {}) is None
