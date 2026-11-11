@@ -1,0 +1,11 @@
+node_modules
+.git
+backend/.venv
+backend/demo_media
+backend/test_media
+backend/media
+ml/data
+ml/runs
+ml/models
+frontend/dist
+**/__pycache__

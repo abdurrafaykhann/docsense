@@ -2,8 +2,20 @@
 
 from __future__ import annotations
 
-import cv2
 import numpy as np
+
+
+class _LazyCV2:
+    """OpenCV is only needed when a page is actually cleaned; the read-only hosted demo (no OCR, no
+    uploads) runs without it, so importing this module must not require it."""
+
+    def __getattr__(self, name: str):
+        import cv2 as _cv2
+
+        return getattr(_cv2, name)
+
+
+cv2 = _LazyCV2()
 
 MAX_SIDE = 2200  # longest side after loading; keeps OCR fast on CPU
 
