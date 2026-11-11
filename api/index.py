@@ -1,3 +1,4 @@
+# ruff: noqa
 """Vercel entrypoint: serves the read-only DocSense demo API (Django, ASGI) as one serverless function.
 
 Cold start: Vercel's filesystem is read-only except /tmp, so the pre-seeded SQLite file and the sample images are
