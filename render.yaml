@@ -1,0 +1,34 @@
+# Render Blueprint for the public demo API (free plan, read-only, pre-seeded SQLite inside the image).
+# Dashboard -> New -> Blueprint -> pick the docsense repo -> fill the two API keys -> Apply.
+services:
+  - type: web
+    name: docsense-api
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./deploy/Dockerfile.render
+    dockerContext: .
+    healthCheckPath: /api/v1/health/
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_ALLOWED_HOSTS
+        value: .onrender.com,localhost
+      - key: GOOGLE_API_KEY      # Gemini (free tier); paste in the dashboard, never commit it
+        sync: false
+      - key: GROQ_API_KEY        # optional second provider
+        sync: false
+      - key: DEMO_READONLY
+        value: "1"
+      - key: DEMO_ASK_DAILY_CAP
+        value: "150"
+      - key: CELERY_EAGER
+        value: "1"
+      - key: CHANNEL_LAYER
+        value: memory
+      - key: EMBEDDER
+        value: hash
+      - key: RERANKER
+        value: overlap
+      - key: OCR_ENGINE
+        value: fake
