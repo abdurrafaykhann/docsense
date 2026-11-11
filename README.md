@@ -289,6 +289,16 @@ make test && make lint
   or another detector. docTR (Apache-2.0), sentence-transformers/MiniLM and the MS-MARCO cross-encoder (Apache-2.0).
 * The demo documents are synthetic. Repo code: MIT.
 
+## Known limits
+
+* **"Ask" is retrieval-based, so it cannot aggregate.** Questions such as "which invoice has the highest total?"
+  depend on which few chunks are retrieved, and I caught it answering such a question wrongly in a live test
+  (the correct answer, from the data, is Hashmi Services at PKR 67,355). Ranking and totals belong to the
+  **Spending AI** page, which runs a whitelisted structured query over the database instead of reading text.
+* **The hosted demo is a reduced build.** It is read-only, has no OCR or layout model, and uses a hash embedder
+  for search instead of MiniLM. The full pipeline (uploads, review, retraining) runs locally with Docker.
+* **Free-tier LLM quotas** run out (Groq especially); the client then fails over to Gemini, which is slower.
+
 ## What I would improve next
 
 1. **Extraction on the target domain.** The LLM arm was run on CORD only. Measure it on real Pakistani invoices
