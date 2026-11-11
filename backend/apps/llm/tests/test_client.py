@@ -2,7 +2,7 @@ import pytest
 from pydantic import BaseModel
 
 from apps.llm.cache import MemoryCache
-from apps.llm.client import LLMClient, Provider, UsageRecord
+from apps.llm.client import LLMClient, Provider, UsageRecord, build_default_client
 from apps.llm.errors import LLMUnavailable, RateLimited, classify
 from apps.llm.fake import FakeChatModel
 
@@ -85,3 +85,16 @@ def test_classify_http_429_like_exception():
 
     assert classify(E()) == (True, 7.0)
     assert classify(ValueError()) == (False, None)
+
+
+def test_default_client_skips_providers_without_a_key(monkeypatch, settings):
+    settings.LLM_PROVIDER = "groq"
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    monkeypatch.setenv("GOOGLE_API_KEY", "test-key-not-real")
+    client = build_default_client()
+    assert [p.name for p in client.providers] == ["google_genai"]
+    monkeypatch.delenv("GOOGLE_API_KEY")
+    import pytest as _pytest
+
+    with _pytest.raises(RuntimeError, match="api_key"):
+        build_default_client()

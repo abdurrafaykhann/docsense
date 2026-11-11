@@ -7,6 +7,7 @@ header up to `max_wait`; longer waits trigger immediate failover instead of bloc
 from __future__ import annotations
 
 import logging
+import os
 import random
 import time
 from collections.abc import Callable
@@ -118,13 +119,20 @@ def build_default_client(settings=None) -> LLMClient:
     order = [settings.LLM_PRIMARY, settings.LLM_FALLBACK]
     if settings.LLM_PROVIDER == "gemini":
         order.reverse()
+    # Only providers whose key is set: one key is enough (Gemini alone is fine on a free-tier demo).
+    key_env = {"groq": "GROQ_API_KEY", "google_genai": "GOOGLE_API_KEY"}
     providers = [
         Provider(
             c["provider"],
             init_chat_model(c["model"], model_provider=c["provider"], temperature=0),
         )
         for c in order
+        if c["provider"] not in key_env or os.environ.get(key_env[c["provider"]])
     ]
+    if not providers:
+        raise RuntimeError(
+            "No LLM API key found (api_key missing). Set GOOGLE_API_KEY and/or GROQ_API_KEY."
+        )
     from .cache import DbCache
 
     return LLMClient(
