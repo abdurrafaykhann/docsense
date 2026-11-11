@@ -8,7 +8,12 @@ from apps.llm.client import build_default_client
 def test_health_endpoint(client):
     res = client.get("/api/v1/health/")
     assert res.status_code == 200
-    assert res.json() == {"status": "ok", "db": True, "service": "docsense"}
+    assert res.json() == {
+        "status": "ok",
+        "db": True,
+        "service": "docsense",
+        "demo_readonly": False,
+    }
 
 
 def test_default_client_is_offline_fake_under_test_settings():

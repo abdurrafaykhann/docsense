@@ -8,6 +8,7 @@ import DocumentPage from './pages/DocumentPage'
 import DocumentsPage from './pages/DocumentsPage'
 import EvaluationPage from './pages/EvaluationPage'
 import UniversePage from './pages/UniversePage'
+import DemoBanner from './components/DemoBanner'
 import LoginPage from './pages/LoginPage'
 import SettingsPage from './pages/SettingsPage'
 
@@ -37,6 +38,7 @@ export default function App() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-5xl flex-col gap-5 p-6">
+      <DemoBanner />
       <nav className="flex items-center gap-5 border-b border-slate-800 pb-3 text-sm">
         <strong className="text-lg">DocSense</strong>
         {link('#/documents', 'Documents', !section || section === 'documents')}

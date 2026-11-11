@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { ApiError } from '../api/client'
+import DemoBanner from '../components/DemoBanner'
 import { useAuth } from '../auth/AuthContext'
 
 function errorText(e: unknown): string {
   if (e instanceof ApiError) {
     const b = e.body as Record<string, unknown> | null
+    if (b && typeof b.detail === 'string') return b.detail
     if (b) return Object.values(b).flat().join(' ')
     return `Request failed (${e.status})`
   }
@@ -42,6 +44,7 @@ export default function LoginPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-6 p-6">
       <h1 className="text-3xl font-bold">DocSense</h1>
+      <DemoBanner withLogin />
       <form onSubmit={submit} className="flex flex-col gap-3" aria-label={mode}>
         {mode === 'signup' && (
           <>

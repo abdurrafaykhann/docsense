@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import connection
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -11,4 +12,11 @@ def health(request):
     with connection.cursor() as cur:
         cur.execute("SELECT 1")
         db_ok = cur.fetchone()[0] == 1
-    return Response({"status": "ok" if db_ok else "degraded", "db": db_ok, "service": "docsense"})
+    return Response(
+        {
+            "status": "ok" if db_ok else "degraded",
+            "db": db_ok,
+            "service": "docsense",
+            "demo_readonly": bool(getattr(settings, "DEMO_READONLY", False)),
+        }
+    )
