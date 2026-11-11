@@ -156,3 +156,39 @@ test('admin page shows an error for non-staff users', async () => {
   render(<AdminPage />)
   expect(await screen.findByRole('alert')).toHaveTextContent('Admin access required')
 })
+
+test('a refused admin action shows the server message instead of failing silently', async () => {
+  vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+    const url = String(input)
+    if (url.includes('/llm-usage/')) return json({}, 403)
+    if (url.includes('/retrain/') && init?.method === 'POST')
+      return json({ detail: 'A retraining job is already running.' }, 400)
+    return json(MODELS)
+  })
+  render(<AdminPage />)
+  await userEvent.click(await screen.findByRole('button', { name: /Retrain on approved/ }))
+  expect(await screen.findByRole('status')).toHaveTextContent(
+    'A retraining job is already running.',
+  )
+})
+
+test('in the public demo the admin actions are disabled and explained', async () => {
+  vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+    const url = String(input)
+    if (url.includes('/health/')) return json({ status: 'ok', demo_readonly: true })
+    if (url.includes('/llm-usage/')) return json({}, 403)
+    return json(MODELS)
+  })
+  render(<AdminPage />)
+  expect(await screen.findByText(/switched off in the public demo/)).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: /Retrain on approved/ })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Activate' })).toBeDisabled()
+})
+
+test('roll back is disabled when no retrained model is active', async () => {
+  vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) =>
+    String(input).includes('/llm-usage/') ? json({}, 403) : json(MODELS),
+  )
+  render(<AdminPage />)
+  expect(await screen.findByRole('button', { name: 'Roll back' })).toBeDisabled()
+})

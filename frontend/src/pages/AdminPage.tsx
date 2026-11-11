@@ -1,7 +1,20 @@
 import { useCallback, useEffect, useState } from 'react'
 import { activateModel, getModels, rollbackModel, startRetrain } from '../api/admin'
 import type { AdminModels, ModelRow } from '../api/admin'
+import { ApiError } from '../api/client'
+import { useDemoMode } from '../components/DemoBanner'
 import LlmUsage from '../components/LlmUsage'
+
+/** The server's own message for a failed action (it explains what to do). */
+function messageOf(e: unknown): string {
+  if (e instanceof ApiError) {
+    const b = e.body as Record<string, unknown> | null
+    if (b && typeof b.detail === 'string') return b.detail
+    if (b && b.epochs) return String(b.epochs)
+    return `Request failed (${e.status}).`
+  }
+  return 'Could not reach the server. Try again.'
+}
 
 const pct = (v: number) => `${(v * 100).toFixed(1)}%`
 const card = 'rounded-xl border border-slate-800 bg-slate-900 p-4'
@@ -26,14 +39,36 @@ export default function AdminPage() {
   const [data, setData] = useState<AdminModels | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [epochs, setEpochs] = useState(5)
+  const [notice, setNotice] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+  const demo = useDemoMode()
 
   const load = useCallback(async () => {
     try {
       setData(await getModels())
-    } catch {
-      setError('Admin access required.')
+    } catch (e) {
+      setError(
+        e instanceof ApiError && (e.status === 401 || e.status === 403)
+          ? 'Admin access required.'
+          : messageOf(e),
+      )
     }
   }, [])
+
+  // Every action reports its outcome; a refusal from the server is shown, not swallowed.
+  const act = async (fn: () => Promise<unknown>, done: string) => {
+    setBusy(true)
+    setNotice(null)
+    try {
+      await fn()
+      setNotice(done)
+      await load()
+    } catch (e) {
+      setNotice(messageOf(e))
+    } finally {
+      setBusy(false)
+    }
+  }
 
   useEffect(() => {
     void load()
@@ -76,25 +111,36 @@ export default function AdminPage() {
             />
           </label>
           <button
-            disabled={running}
+            disabled={running || busy || demo || data.feedback.samples === 0}
+            title={
+              data.feedback.samples === 0 ? 'Approve some reviewed documents first' : undefined
+            }
             className="rounded-lg bg-indigo-500 px-3 py-1.5 text-sm font-medium disabled:opacity-50"
-            onClick={async () => {
-              await startRetrain(epochs)
-              await load()
-            }}
+            onClick={() => act(() => startRetrain(epochs), 'Retraining started.')}
           >
             {running ? 'Training…' : 'Retrain on approved documents'}
           </button>
           <button
-            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm"
-            onClick={async () => {
-              await rollbackModel()
-              await load()
-            }}
+            disabled={busy || demo || !data.models.some((m) => m.is_active)}
+            title={
+              data.models.some((m) => m.is_active) ? undefined : 'No retrained model is active'
+            }
+            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm disabled:opacity-50"
+            onClick={() => act(() => rollbackModel(), 'Rolled back to the previous model.')}
           >
             Roll back
           </button>
         </div>
+        {demo && (
+          <p className="mt-2 text-xs text-slate-400">
+            Retraining is switched off in the public demo; it runs in the full local setup.
+          </p>
+        )}
+        {notice && (
+          <p role="status" className="mt-2 text-xs text-amber-300">
+            {notice}
+          </p>
+        )}
         {data.jobs[0] && (
           <p className="mt-2 text-xs text-slate-400" data-testid="latest-job">
             Latest job #{data.jobs[0].id}: {data.jobs[0].status}
@@ -139,11 +185,9 @@ export default function AdminPage() {
               <td>
                 {!m.is_active && (
                   <button
-                    className="rounded border border-slate-700 px-2 py-1 text-xs"
-                    onClick={async () => {
-                      await activateModel(m.id)
-                      await load()
-                    }}
+                    disabled={busy || demo}
+                    className="rounded border border-slate-700 px-2 py-1 text-xs disabled:opacity-50"
+                    onClick={() => act(() => activateModel(m.id), `Activated ${m.name}.`)}
                   >
                     Activate
                   </button>
@@ -154,6 +198,12 @@ export default function AdminPage() {
         </tbody>
       </table>
       <LlmUsage />
+      {demo && (
+        <p className="text-xs text-slate-500">
+          On the hosted demo each serverless instance keeps its own short-lived log, so these counts
+          reset often. Run DocSense locally to see full usage history.
+        </p>
+      )}
     </section>
   )
 }

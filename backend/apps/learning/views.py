@@ -66,9 +66,16 @@ class Retrain(APIView):
     permission_classes = [IsStaffUser]
 
     def post(self, request):
-        epochs = int(request.data.get("epochs", 5))
+        try:
+            epochs = int(request.data.get("epochs", 5))
+        except (TypeError, ValueError):
+            msg = "Epochs must be a whole number from 1 to 50."
+            raise ValidationError({"epochs": msg}) from None
         if not 1 <= epochs <= 50:
-            raise ValidationError({"epochs": "Between 1 and 50."})
+            raise ValidationError({"epochs": "Epochs must be between 1 and 50."})
+        if not TrainingSample.objects.exists():
+            msg = "No approved documents to learn from yet. Review and approve some first."
+            raise ValidationError({"detail": msg})
         if RetrainJob.objects.filter(status__in=["queued", "running"]).exists():
             raise ValidationError({"detail": "A retraining job is already running."})
         job = RetrainJob.objects.create(requested_by=request.user, epochs=epochs)

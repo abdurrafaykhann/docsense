@@ -284,9 +284,14 @@ def test_staff_activates_and_rolls_back_via_api(world):
     assert s.post("/api/v1/admin/models/rollback/").json()["active"]["name"] == "v1"
 
 
-def test_retrain_endpoint_starts_job_and_blocks_concurrent_runs(world, settings):
+def test_retrain_endpoint_starts_job_and_blocks_concurrent_runs(world, doc, settings):
     settings.LAYOUT_MODEL_PATH = ""  # eager task runs and fails fast: no base model
     s = staff_client(world)
+    no_samples = s.post("/api/v1/admin/retrain/", {"epochs": 2}, format="json")
+    assert no_samples.status_code == 400 and "approve" in no_samples.json()["detail"]
+    c, d = doc
+    c.post(u(world["ws"], d, "approve/"))
+    assert s.post("/api/v1/admin/retrain/", {"epochs": "abc"}, format="json").status_code == 400
     res = s.post("/api/v1/admin/retrain/", {"epochs": 2}, format="json")
     assert res.status_code == 202
     job = s.get(f"/api/v1/admin/retrain/{res.json()['id']}/").json()
