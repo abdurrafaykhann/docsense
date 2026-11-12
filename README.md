@@ -6,6 +6,10 @@
 The hosted build is reduced (no OCR/layout model, hash-embedding search, pre-seeded data, questions capped per day);
 the full pipeline runs locally with Docker, see below.
 
+[![Watch the 60-second DocSense demo](docs/images/demo-poster.jpg)](docs/demo/docsense-demo.mp4)
+
+*60-second walkthrough with voiceover: upload, review, cited Q&A, the spending agent, anomaly flags and the 3D document map.*
+
 **AI document intelligence for invoices and receipts.** Upload a PDF or a phone photo: DocSense cleans the
 image, reads it with a local OCR engine, finds the invoice layout with a **YOLO model I trained myself on
 synthetic Pakistani invoices**, has an LLM fill a strict schema from each region's text, then **checks the

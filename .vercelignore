@@ -9,3 +9,4 @@ ml/runs
 ml/models
 frontend/dist
 **/__pycache__
+docs/demo
