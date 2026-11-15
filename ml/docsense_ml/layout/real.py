@@ -18,7 +18,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from ..synth.build import write_data_yaml
+from ..classes import write_data_yaml
 
 TABLE, TOTALS = 2, 3
 TUNE = 30

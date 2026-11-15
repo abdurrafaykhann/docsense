@@ -17,8 +17,7 @@ import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 
-from ..synth.build import write_data_yaml
-from ..synth.render import CLASSES
+from ..classes import CLASSES, write_data_yaml
 from . import yolo
 
 EXPERIMENTS = {

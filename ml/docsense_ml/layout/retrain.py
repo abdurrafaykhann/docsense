@@ -16,7 +16,7 @@ import shutil
 from datetime import datetime
 from pathlib import Path
 
-from ..synth.render import CLASSES
+from ..classes import CLASSES
 from . import yolo
 
 FEEDBACK_COPIES = 3  # human-confirmed samples are scarce: oversample them next to synthetic data

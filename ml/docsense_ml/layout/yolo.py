@@ -10,7 +10,7 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-from ..synth.render import CLASSES
+from ..classes import CLASSES
 
 NO_BUILTIN_AUG = {
     "mosaic": 0.0,

@@ -17,9 +17,10 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+from ..classes import CLASSES, write_data_yaml  # noqa: F401  (re-exported for the layout tools)
 from .augment import augment
 from .generator import make_invoice
-from .render import CLASSES, Renderer, to_yolo_lines
+from .render import Renderer, to_yolo_lines
 
 LEVELS = ("none", "basic", "full")
 
@@ -45,14 +46,6 @@ def _write_labels(path: Path, boxes, labels) -> None:
             f"{c} {b[0]:.6f} {b[1]:.6f} {b[2]:.6f} {b[3]:.6f}"
             for c, b in zip(labels, boxes, strict=True)
         ),
-        encoding="utf-8",
-    )
-
-
-def write_data_yaml(root: Path, train: str = "images/train", val: str = "images/val") -> None:
-    (root / "data.yaml").write_text(
-        f"path: {root.resolve().as_posix()}\ntrain: {train}\nval: {val}\nnames:\n"
-        + "".join(f"  {i}: {c}\n" for i, c in enumerate(CLASSES)),
         encoding="utf-8",
     )
 

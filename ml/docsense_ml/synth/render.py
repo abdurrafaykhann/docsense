@@ -14,7 +14,7 @@ from PIL import Image
 from .generator import InvoiceData
 
 TEMPLATE_DIR = Path(__file__).parent / "templates"
-CLASSES = ["vendor", "meta", "table", "totals", "other"]  # YOLO class ids 0..4
+from ..classes import CLASSES  # noqa: E402  (re-exported: synth.build and synth.preview import it from here)
 
 
 def _money(v: float, style: str = "plain") -> str:

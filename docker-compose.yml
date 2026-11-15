@@ -10,11 +10,11 @@ x-backend: &backend
     CACHE_REDIS: "1"
     DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,api"
     SEED_DIR: /app/seed/demo_workspace
-    LAYOUT_MODEL_PATH: /app/ml/models/layout-current.pt
+    LAYOUT_MODEL_PATH: /ml/models/layout-current.pt
   volumes:
     - media:/app/media
     - ./seed:/app/seed:ro
-    - ./ml/models:/app/ml/models:ro
+    - ./ml:/ml   # the retrain step imports docsense_ml from here and replays the data in ml/data
     - ./docs/eval-results:/docs/eval-results:ro   # shown on the Evaluation page
   depends_on:
     db: { condition: service_healthy }
@@ -39,7 +39,7 @@ services:
       CACHE_REDIS: "1"
       DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,api"
       SEED_DIR: /app/seed/demo_workspace
-      LAYOUT_MODEL_PATH: /app/ml/models/layout-current.pt
+      LAYOUT_MODEL_PATH: /ml/models/layout-current.pt
       SEED_DEMO: "1"       # one command setup: migrate + seed the demo workspace on first start
       RUN_MIGRATIONS: "1"
     ports: ["8000:8000"]
@@ -51,7 +51,7 @@ services:
       CACHE_REDIS: "1"
       DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,api"
       SEED_DIR: /app/seed/demo_workspace
-      LAYOUT_MODEL_PATH: /app/ml/models/layout-current.pt
+      LAYOUT_MODEL_PATH: /ml/models/layout-current.pt
       RUN_MIGRATIONS: "0"
     command: celery -A config worker -l info
     depends_on:

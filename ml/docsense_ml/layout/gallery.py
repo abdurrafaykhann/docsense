@@ -10,7 +10,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-from ..synth.render import CLASSES
+from ..classes import CLASSES
 
 COLORS = {
     "vendor": "#e11d48",
