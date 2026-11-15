@@ -192,3 +192,21 @@ test('roll back is disabled when no retrained model is active', async () => {
   render(<AdminPage />)
   expect(await screen.findByRole('button', { name: 'Roll back' })).toBeDisabled()
 })
+
+test('a failed document load shows a message and recovers with Retry', async () => {
+  let calls = 0
+  vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+    const url = String(input)
+    if (url.endsWith('/documents/4/')) {
+      calls += 1
+      if (calls === 1) throw new TypeError('Failed to fetch')
+      return json(DOC)
+    }
+    if (url.includes('/image/')) return new Response(new Blob(['x']), { status: 200 })
+    return json({ count: 0, documents: [] })
+  })
+  render(<DocumentPage workspaceId={1} id={4} />)
+  expect(await screen.findByRole('alert')).toHaveTextContent(/Could not reach the server/)
+  await userEvent.click(screen.getByRole('button', { name: 'Retry now' }))
+  expect(await screen.findByRole('heading', { name: 'r.png' })).toBeInTheDocument()
+})

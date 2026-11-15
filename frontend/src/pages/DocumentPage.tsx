@@ -51,10 +51,23 @@ export default function DocumentPage({
   const [newCls, setNewCls] = useState<LayoutRegion['cls']>('table')
   const [error, setError] = useState<string | null>(null)
 
-  const load = useCallback(
-    async () => setDoc(await getDocument(workspaceId, id)),
-    [workspaceId, id],
-  )
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const load = useCallback(async () => {
+    try {
+      setDoc(await getDocument(workspaceId, id))
+      setLoadError(null)
+    } catch (e) {
+      setLoadError(errorMessage(e, 'Could not load this document.'))
+    }
+  }, [workspaceId, id])
+
+  // A failed first load (flaky connection, server restarting) retries on its own instead of
+  // leaving the page on "Loading…" forever.
+  useEffect(() => {
+    if (doc) return
+    const t = setInterval(() => void load(), 4000)
+    return () => clearInterval(t)
+  }, [doc, load])
 
   useEffect(() => {
     void load()
@@ -181,7 +194,20 @@ export default function DocumentPage({
     location.hash = next ? `#/documents/${next.id}` : '#/documents'
   }
 
-  if (!doc) return <p className="text-slate-400">Loading…</p>
+  if (!doc)
+    return loadError ? (
+      <p role="alert" className="flex flex-wrap items-center gap-3 text-sm text-rose-400">
+        {loadError} Retrying…
+        <button
+          className="rounded-lg border border-slate-700 px-3 py-1 text-slate-300 hover:bg-slate-800"
+          onClick={() => void load()}
+        >
+          Retry now
+        </button>
+      </p>
+    ) : (
+      <p className="text-slate-400">Loading…</p>
+    )
   const curPage = doc.pages.find((p) => p.number === page) ?? doc.pages[0]
 
   return (
