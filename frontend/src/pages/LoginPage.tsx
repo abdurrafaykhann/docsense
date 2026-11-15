@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { errorMessage } from '../api/client'
-import DemoBanner from '../components/DemoBanner'
+import DemoBanner, { DEMO_EMAIL, DEMO_PASSWORD } from '../components/DemoBanner'
 import Logo from '../components/Logo'
 import { useLiquidGlass } from '../hooks/useLiquidGlass'
 import { useAuth } from '../auth/AuthContext'
@@ -40,14 +40,16 @@ export default function LoginPage() {
   const [workspace, setWorkspace] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
-  useLiquidGlass('.ds-login', true, { tilt: true, tiltFactor: 2 })
+  // No tilt: the pane would tilt toward the cursor, move out from under it and snap back, which
+  // makes the whole page shake while the pointer is over the card.
+  useLiquidGlass('.ds-login')
 
   async function submit(e: FormEvent) {
     e.preventDefault()
     setBusy(true)
     setError(null)
     try {
-      if (mode === 'login') await login(email, password)
+      if (mode === 'login') await login(email.trim(), password)
       else await signup(email, password, name, workspace)
     } catch (err) {
       setError(errorText(err))
@@ -109,7 +111,15 @@ export default function LoginPage() {
                   : 'Start with an empty workspace for your documents.'}
               </p>
             </div>
-            <DemoBanner withLogin />
+            <DemoBanner
+              withLogin
+              onUseDemo={() => {
+                setMode('login')
+                setEmail(DEMO_EMAIL)
+                setPassword(DEMO_PASSWORD)
+                setError(null)
+              }}
+            />
             <form onSubmit={submit} className="flex flex-col gap-3" aria-label={mode}>
               {mode === 'signup' && (
                 <>
