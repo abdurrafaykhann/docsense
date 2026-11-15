@@ -258,6 +258,16 @@
   z-index: 3;
 }
 
+/*
+ * liquidGL draws the pane in WebGL and sets pointer-events: none on the pane's content layer, so
+ * clicks fall through to the page behind: the sign-in fields could not be focused and the navigation
+ * links did not respond to a real mouse. Switch interaction back on for everything inside a pane.
+ */
+.ds-glass .ds-content,
+.ds-glass .ds-content * {
+  pointer-events: auto !important;
+}
+
 .ds-wordmark {
   font-weight: 650;
   letter-spacing: -0.035em;
