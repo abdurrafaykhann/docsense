@@ -24,7 +24,7 @@ const fieldLabel = (name: string) =>
 
 const pct = (c: number) => `${Math.round(c * 100)}%`
 const tone = (c: number) =>
-  c >= 0.85 ? 'text-emerald-400' : c >= 0.7 ? 'text-amber-300' : 'text-rose-400'
+  c >= 0.85 ? 'text-emerald-300' : c >= 0.7 ? 'text-amber-300' : 'text-rose-400'
 const input =
   'w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-sm outline-none focus:border-indigo-400'
 
@@ -328,7 +328,7 @@ export default function DocumentPage({
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-emerald-400">All validation rules pass.</p>
+              <p className="text-sm text-emerald-300">All validation rules pass.</p>
             )}
 
             <table className="w-full text-sm" aria-label="Extracted fields">

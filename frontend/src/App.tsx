@@ -82,7 +82,7 @@ export default function App() {
               {link('#/settings', 'Settings', section === 'settings')}
               <span
                 title={me.user.email}
-                className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-caramel to-cocoa text-xs font-semibold text-cream shadow-[inset_0_1px_0_rgba(255,253,249,0.25)]"
+                className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cocoa to-[#4a3628] text-xs font-semibold text-cream shadow-[inset_0_1px_0_rgba(255,253,249,0.25)]"
               >
                 {initials}
               </span>

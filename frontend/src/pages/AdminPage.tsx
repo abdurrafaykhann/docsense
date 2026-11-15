@@ -25,7 +25,7 @@ function Deltas({ m }: { m: ModelRow }) {
   return (
     <ul className="text-xs">
       {Object.entries(d).map(([set, v]) => (
-        <li key={set} className={v > 0 ? 'text-emerald-400' : v < 0 ? 'text-rose-400' : ''}>
+        <li key={set} className={v > 0 ? 'text-emerald-300' : v < 0 ? 'text-rose-400' : ''}>
           {set}: {m.metrics.previous?.[set] ? pct(m.metrics.previous[set].map50) : '?'} →{' '}
           {m.metrics.new?.[set] ? pct(m.metrics.new[set].map50) : '?'} ({v >= 0 ? '+' : ''}
           {(v * 100).toFixed(1)} pts)
