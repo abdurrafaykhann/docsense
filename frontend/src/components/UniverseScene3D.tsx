@@ -128,7 +128,7 @@ export default function UniverseScene3D({
         gl={{ antialias: points.length < 3000, powerPreference: 'high-performance' }}
         aria-label="3D document universe"
       >
-        <color attach="background" args={['#020617']} />
+        <color attach="background" args={['#fffdf9']} />
         <ambientLight intensity={0.9} />
         <directionalLight position={[5, 5, 5]} intensity={1.2} />
         <Points points={points} colorBy={colorBy} onOpen={onOpen} onHover={onHover} />

@@ -17,6 +17,11 @@ import Stepper from '../components/Stepper'
 import { toneFor } from '../lib/bbox'
 import type { BBox } from '../lib/bbox'
 
+const ACRONYMS: Record<string, string> = { ntn: 'NTN', strn: 'STRN' }
+/** "invoice_number" -> "Invoice number"; tax IDs stay upper-case. */
+const fieldLabel = (name: string) =>
+  ACRONYMS[name] ?? name.charAt(0).toUpperCase() + name.slice(1).replace(/_/g, ' ')
+
 const pct = (c: number) => `${Math.round(c * 100)}%`
 const tone = (c: number) =>
   c >= 0.85 ? 'text-emerald-400' : c >= 0.7 ? 'text-amber-300' : 'text-rose-400'
@@ -337,7 +342,7 @@ export default function DocumentPage({
                         key={`${f.name}:${current}`}
                         className={`border-b border-slate-800 ${selected === f.name ? 'bg-slate-800/60' : ''}`}
                       >
-                        <td className="w-28 py-1.5 pr-2 text-slate-400">{f.name}</td>
+                        <td className="w-32 py-1.5 pr-2 text-slate-400">{fieldLabel(f.name)}</td>
                         <td className="py-1.5 pr-2">
                           <input
                             aria-label={f.name}

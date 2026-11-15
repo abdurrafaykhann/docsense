@@ -16,6 +16,7 @@
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",
     "@tailwindcss/vite": "^4.3.4",
+    "liquid-gl": "^3.0.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tailwindcss": "^4.3.4",

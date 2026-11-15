@@ -88,7 +88,7 @@ export default function PageViewer({
           style={{ ...bboxToStyle(r.bbox), borderColor: REGION_COLOR[r.cls] }}
         >
           <span
-            className="absolute -top-0 left-0 px-1 text-[10px] font-semibold text-white"
+            className="absolute -top-0 left-0 px-1 text-[10px] font-semibold text-cream"
             style={{ background: REGION_COLOR[r.cls] }}
           >
             {r.cls} {Math.round(r.score * 100)}%

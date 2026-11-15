@@ -31,7 +31,7 @@ export default function BarChart({
               <span className="h-3 rounded bg-slate-800">
                 <span
                   data-testid="bar"
-                  className="block h-3 rounded bg-indigo-500"
+                  className="block h-3 rounded bg-caramel"
                   style={{ width: `${Math.max(2, (d.value / max) * 100)}%` }}
                 />
               </span>

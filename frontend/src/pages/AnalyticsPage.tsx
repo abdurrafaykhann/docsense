@@ -106,9 +106,14 @@ export default function AnalyticsPage({ workspaceId }: { workspaceId: number }) 
             ['Average invoice', Math.round(summary.average).toLocaleString()],
             ['Open flags', summary.open_flags],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-xl border border-slate-800 bg-slate-900 p-3">
-              <dt className="text-xs text-slate-400">{label}</dt>
-              <dd className="text-lg font-semibold">{value}</dd>
+            <div
+              key={label}
+              className="rounded-xl border border-slate-800 bg-slate-900 px-4 py-3.5"
+            >
+              <dt className="ds-eyebrow text-slate-400">{label}</dt>
+              <dd className="mt-1.5 text-2xl font-semibold tracking-tight text-white tabular-nums">
+                {value}
+              </dd>
             </div>
           ))}
         </dl>
