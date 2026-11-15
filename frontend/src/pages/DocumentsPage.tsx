@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { listDocuments, reviewQueue, uploadFiles } from '../api/documents'
 import type { DocSummary } from '../api/documents'
+import { errorMessage } from '../api/client'
 import StatusChip from '../components/StatusChip'
 
 export default function DocumentsPage({ workspaceId }: { workspaceId: number }) {
@@ -36,8 +37,7 @@ export default function DocumentsPage({ workspaceId }: { workspaceId: number }) 
       const res = await uploadFiles(workspaceId, Array.from(files))
       if (res.errors.length) setMessage(res.errors.map((e) => `${e.name}: ${e.error}`).join('; '))
     } catch (e) {
-      setMessage('Upload failed')
-      console.error(e)
+      setMessage(errorMessage(e, 'Upload failed.'))
     } finally {
       setBusy(false)
       if (input.current) input.current.value = ''

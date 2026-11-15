@@ -1,20 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { activateModel, getModels, rollbackModel, startRetrain } from '../api/admin'
 import type { AdminModels, ModelRow } from '../api/admin'
-import { ApiError } from '../api/client'
+import { ApiError, errorMessage } from '../api/client'
 import { useDemoMode } from '../components/DemoBanner'
 import LlmUsage from '../components/LlmUsage'
 
-/** The server's own message for a failed action (it explains what to do). */
-function messageOf(e: unknown): string {
-  if (e instanceof ApiError) {
-    const b = e.body as Record<string, unknown> | null
-    if (b && typeof b.detail === 'string') return b.detail
-    if (b && b.epochs) return String(b.epochs)
-    return `Request failed (${e.status}).`
-  }
-  return 'Could not reach the server. Try again.'
-}
+const messageOf = (e: unknown) => errorMessage(e)
 
 const pct = (v: number) => `${(v * 100).toFixed(1)}%`
 const card = 'rounded-xl border border-slate-800 bg-slate-900 p-4'

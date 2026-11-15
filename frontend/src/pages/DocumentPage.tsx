@@ -11,6 +11,7 @@ import {
   watchProgress,
 } from '../api/documents'
 import type { DocDetail, Extraction, LayoutRegion, LineItem } from '../api/documents'
+import { errorMessage } from '../api/client'
 import PageViewer from '../components/PageViewer'
 import StatusChip from '../components/StatusChip'
 import Stepper from '../components/Stepper'
@@ -121,13 +122,25 @@ export default function DocumentPage({
     [ext, selected, page],
   )
 
+  /** Runs an action; on failure shows the server's message instead of failing silently. */
+  async function guard(fn: () => Promise<unknown>): Promise<boolean> {
+    try {
+      await fn()
+      setError(null)
+      return true
+    } catch (e) {
+      setError(errorMessage(e))
+      return false
+    }
+  }
+
   async function saveField(name: string, value: string, current: string) {
     if (value === current) return
     try {
       setExt(await patchField(workspaceId, id, name, { value }))
       setError(null)
-    } catch {
-      setError(`Could not save ${name}`)
+    } catch (e) {
+      setError(errorMessage(e, `Could not save ${name}.`))
     }
   }
 
@@ -139,28 +152,30 @@ export default function DocumentPage({
     }
     if (!selected) return
     setDrawing(false)
-    setExt(await patchField(workspaceId, id, selected, { bbox, page }))
+    await guard(async () => setExt(await patchField(workspaceId, id, selected, { bbox, page })))
   }
 
   async function saveLayout() {
     if (!draft) return
-    await putRegions(
-      workspaceId,
-      id,
-      page,
-      draft.map((r) => ({ cls: r.cls, bbox: r.bbox })),
-    )
-    setDraft(null)
-    setRegionSel(null)
-    await load()
+    await guard(async () => {
+      await putRegions(
+        workspaceId,
+        id,
+        page,
+        draft.map((r) => ({ cls: r.cls, bbox: r.bbox })),
+      )
+      setDraft(null)
+      setRegionSel(null)
+      await load()
+    })
   }
 
   async function saveItems(items: LineItem[]) {
-    setExt(await putLineItems(workspaceId, id, items))
+    await guard(async () => setExt(await putLineItems(workspaceId, id, items)))
   }
 
   async function approve() {
-    await approveDocument(workspaceId, id)
+    if (!(await guard(() => approveDocument(workspaceId, id)))) return
     const q = await reviewQueue(workspaceId)
     const next = q.documents.find((d) => d.id !== id)
     location.hash = next ? `#/documents/${next.id}` : '#/documents'
@@ -182,10 +197,12 @@ export default function DocumentPage({
         <div className="flex gap-2">
           <button
             className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:bg-slate-800"
-            onClick={async () => {
-              await reprocess(workspaceId, id)
-              await load()
-            }}
+            onClick={() =>
+              guard(async () => {
+                await reprocess(workspaceId, id)
+                await load()
+              })
+            }
           >
             Reprocess
           </button>

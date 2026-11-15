@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { api } from '../api/client'
+import { api, errorMessage } from '../api/client'
 import type { ApiKeyRow, Member, Usage } from '../api/types'
 import { useAuth } from '../auth/AuthContext'
 import WebhooksSection from '../components/WebhooksSection'
@@ -14,6 +14,7 @@ export default function SettingsPage() {
   const [usage, setUsage] = useState<Usage | null>(null)
   const [newKey, setNewKey] = useState<string | null>(null)
   const [keyName, setKeyName] = useState('')
+  const [keyError, setKeyError] = useState<string | null>(null)
 
   const membership = me?.workspaces.find((w) => w.workspace_id === wsId)
   const isOwner = membership?.role === 'owner'
@@ -31,24 +32,34 @@ export default function SettingsPage() {
   }, [load])
 
   async function createKey() {
-    const row = await api<ApiKeyRow>(`/workspaces/${wsId}/api-keys/`, {
-      method: 'POST',
-      json: { name: keyName || 'default' },
-    })
-    setNewKey(row.key ?? null)
-    setKeyName('')
-    await load()
+    setKeyError(null)
+    try {
+      const row = await api<ApiKeyRow>(`/workspaces/${wsId}/api-keys/`, {
+        method: 'POST',
+        json: { name: keyName || 'default' },
+      })
+      setNewKey(row.key ?? null)
+      setKeyName('')
+      await load()
+    } catch (e) {
+      setKeyError(errorMessage(e, 'Could not create the key.'))
+    }
   }
 
   async function revoke(id: number) {
-    await api(`/workspaces/${wsId}/api-keys/${id}/`, { method: 'DELETE' })
-    await load()
+    setKeyError(null)
+    try {
+      await api(`/workspaces/${wsId}/api-keys/${id}/`, { method: 'DELETE' })
+      await load()
+    } catch (e) {
+      setKeyError(errorMessage(e, 'Could not revoke the key.'))
+    }
   }
 
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-5 p-6">
+    <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
       <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Settings</h1>
+        <h1 className="text-xl font-semibold">Settings</h1>
         <div className="flex items-center gap-3 text-sm">
           <span className="text-slate-400">{me?.user.email}</span>
           <button onClick={logout} className="underline">
@@ -95,6 +106,11 @@ export default function SettingsPage() {
       {isOwner && (
         <section className={card} aria-label="API keys">
           <h2 className="mb-2 font-semibold">API keys</h2>
+          {keyError && (
+            <p role="alert" className="mb-3 text-sm text-rose-400">
+              {keyError}
+            </p>
+          )}
           {newKey && (
             <p
               role="status"
@@ -136,6 +152,6 @@ export default function SettingsPage() {
         </section>
       )}
       {isOwner && wsId != null && <WebhooksSection workspaceId={wsId} />}
-    </main>
+    </section>
   )
 }

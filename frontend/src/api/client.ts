@@ -18,6 +18,25 @@ export const tokens = {
   },
 }
 
+/**
+ * A readable message for a failed request: the server's own `detail` when it sent one, otherwise its
+ * field messages (internal flags such as `demo_readonly` are skipped), otherwise `fallback`.
+ */
+export function errorMessage(e: unknown, fallback = 'Something went wrong. Try again.'): string {
+  if (e instanceof ApiError) {
+    const b = e.body as Record<string, unknown> | null
+    if (b && typeof b.detail === 'string') return b.detail
+    if (b && typeof b === 'object') {
+      const parts = Object.values(b)
+        .flat()
+        .filter((v): v is string => typeof v === 'string')
+      if (parts.length) return parts.join(' ')
+    }
+    return `${fallback} (error ${e.status})`
+  }
+  return 'Could not reach the server. Check your connection and try again.'
+}
+
 export class ApiError extends Error {
   status: number
   body: unknown

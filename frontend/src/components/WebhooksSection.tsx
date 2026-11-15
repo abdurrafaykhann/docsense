@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ApiError, api } from '../api/client'
+import { api, errorMessage } from '../api/client'
 
 interface Endpoint {
   id: number
@@ -49,14 +49,18 @@ export default function WebhooksSection({ workspaceId }: { workspaceId: number }
       setUrl('')
       await load()
     } catch (e) {
-      const body = e instanceof ApiError ? (e.body as Record<string, unknown> | null) : null
-      setError(body ? Object.values(body).flat().join(' ') : 'Could not create webhook')
+      setError(errorMessage(e, 'Could not create the webhook.'))
     }
   }
 
   async function test(id: number) {
-    await api(`${base}${id}/test/`, { method: 'POST' })
-    setLog({ ...log, [id]: await api<Delivery[]>(`${base}${id}/deliveries/`) })
+    setError(null)
+    try {
+      await api(`${base}${id}/test/`, { method: 'POST' })
+      setLog({ ...log, [id]: await api<Delivery[]>(`${base}${id}/deliveries/`) })
+    } catch (e) {
+      setError(errorMessage(e, 'Could not send the test event.'))
+    }
   }
 
   return (
@@ -89,8 +93,13 @@ export default function WebhooksSection({ workspaceId }: { workspaceId: number }
                 <button
                   className="text-rose-400 underline"
                   onClick={async () => {
-                    await api(`${base}${h.id}/`, { method: 'DELETE' })
-                    await load()
+                    setError(null)
+                    try {
+                      await api(`${base}${h.id}/`, { method: 'DELETE' })
+                      await load()
+                    } catch (e) {
+                      setError(errorMessage(e, 'Could not delete the webhook.'))
+                    }
                   }}
                 >
                   Delete

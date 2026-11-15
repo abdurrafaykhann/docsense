@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { api } from '../api/client'
+import { api, errorMessage } from '../api/client'
 import BarChart from '../components/BarChart'
 
 interface SpendRow {
@@ -62,6 +62,7 @@ export default function AnalyticsPage({ workspaceId }: { workspaceId: number }) 
   const [category, setCategory] = useState<SpendRow[]>([])
   const [flags, setFlags] = useState<FlagRow[]>([])
   const [showResolved, setShowResolved] = useState(false)
+  const [notice, setNotice] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     const base = `/workspaces/${workspaceId}/analytics`
@@ -85,11 +86,16 @@ export default function AnalyticsPage({ workspaceId }: { workspaceId: number }) 
   }, [load])
 
   async function resolve(f: FlagRow) {
-    await api(`/workspaces/${workspaceId}/analytics/flags/${f.id}/`, {
-      method: 'PATCH',
-      json: { resolved: !f.resolved },
-    })
-    await load()
+    setNotice(null)
+    try {
+      await api(`/workspaces/${workspaceId}/analytics/flags/${f.id}/`, {
+        method: 'PATCH',
+        json: { resolved: !f.resolved },
+      })
+      await load()
+    } catch (e) {
+      setNotice(errorMessage(e, 'Could not update the flag.'))
+    }
   }
 
   const shown = flags.filter((f) => showResolved || !f.resolved)
@@ -136,6 +142,11 @@ export default function AnalyticsPage({ workspaceId }: { workspaceId: number }) 
             Show resolved
           </label>
         </div>
+        {notice && (
+          <p role="alert" className="mb-2 text-sm text-rose-400">
+            {notice}
+          </p>
+        )}
         <table className="w-full text-sm" aria-label="Flagged items">
           <tbody>
             {shown.length === 0 && (

@@ -1,20 +1,12 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { ApiError } from '../api/client'
+import { errorMessage } from '../api/client'
 import DemoBanner from '../components/DemoBanner'
 import Logo from '../components/Logo'
 import { useLiquidGlass } from '../hooks/useLiquidGlass'
 import { useAuth } from '../auth/AuthContext'
 
-function errorText(e: unknown): string {
-  if (e instanceof ApiError) {
-    const b = e.body as Record<string, unknown> | null
-    if (b && typeof b.detail === 'string') return b.detail
-    if (b) return Object.values(b).flat().join(' ')
-    return `Request failed (${e.status})`
-  }
-  return 'Something went wrong'
-}
+const errorText = (e: unknown) => errorMessage(e)
 
 const FEATURES = [
   {
